@@ -15,7 +15,7 @@ class Pool {
     return this._pool.end();
   }
 
-  query(sql: pg.QueryArrayConfig, params: any) {
+  query(sql: any, params: any) {
     if (!this._pool) return;
     return this._pool.query(sql, params);
   }
