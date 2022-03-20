@@ -1,4 +1,5 @@
 import pool from '../database/pool';
+import { User } from '../models/user';
 import toCamelCase from './utils/to-camel-case';
 
 class UserRepo {
@@ -19,10 +20,11 @@ class UserRepo {
     return toCamelCase(rows)[0];
   }
 
-  static async insert(email: string, password: string, role: string) {
+  static async insert(user: User) {
+    const { email, password, firstName, lastName, role } = user;
     const { rows } = await pool.query(
-      'INSERT INTO users (email, password, role) VALUES ($1, $2, $3) RETURNING *;',
-      [email, password, role]
+      'INSERT INTO users (email, password, first_name, last_name, role) VALUES ($1, $2, $3, $4, $5) RETURNING *;',
+      [email, password, firstName, lastName, role]
     ) || {};
     if (!rows) return null;
 
