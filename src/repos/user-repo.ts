@@ -1,4 +1,5 @@
 import pool from '../database/pool';
+import { Auth } from '../models/auth';
 import { User } from '../models/user';
 import toCamelCase from './utils/to-camel-case';
 
@@ -14,6 +15,26 @@ class UserRepo {
     const { rows } = await pool.query(
       'SELECT * FROM users WHERE id = $1;',
       [id]
+    ) || {};
+    if (!rows) return null;
+
+    return toCamelCase(rows)[0];
+  }
+
+  static async findByEmail(email: string) {
+    const { rows } = await pool.query(
+      'SELECT * FROM users WHERE email = $1;',
+      [email]
+    ) || {};
+    if (!rows) return null;
+
+    return toCamelCase(rows)[0];
+  }
+
+  static async register({ email, password }: Auth) {
+    const { rows } = await pool.query(
+      'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *;',
+      [email, password]
     ) || {};
     if (!rows) return null;
 
