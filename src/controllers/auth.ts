@@ -15,7 +15,7 @@ const tokenForUser = (user: User) => {
   return jwt.sign(
     {
       email: user.email,
-      userId: user.id,
+      sub: user.id,
       iat: timestamp,
     },
     config.tokenSecret,
