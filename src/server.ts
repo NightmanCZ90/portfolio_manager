@@ -1,7 +1,8 @@
 import express, { NextFunction, Request, Response } from 'express';
+import cors from 'cors';
+
 import usersRoutes from './routes/users';
 import authRoutes from './routes/auth';
-import cors from 'cors';
 
 export interface ValidationError extends Error {
   statusCode?: number;

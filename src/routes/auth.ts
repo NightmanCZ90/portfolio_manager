@@ -39,6 +39,13 @@ router.post('/signup', [
     })
 ], authController.signup);
 
-router.post('/login', authController.login);
+router.post('/login', [
+  body('email')
+    .isEmail()
+    .withMessage('Please enter a valid email')
+    .normalizeEmail(),
+  body('password')
+    .trim(),
+], authController.login);
 
 export default router;

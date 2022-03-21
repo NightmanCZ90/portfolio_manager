@@ -8,6 +8,20 @@ import UserRepo from '../repos/user-repo';
 import { TypedRequestBody } from '../models/routes';
 import { ValidationError } from '../server';
 import { Auth } from '../models/auth';
+import config from '../config';
+
+const tokenForUser = (user: User) => {
+  const timestamp = new Date().getTime();
+  return jwt.sign(
+    {
+      email: user.email,
+      userId: user.id,
+      iat: timestamp,
+    },
+    config.tokenSecret,
+    { expiresIn: config.jwtExpirySeconds }
+    );
+}
 
 export default {
   signup: async (req: TypedRequestBody<User>, res: Response, next: NextFunction) => {
@@ -27,7 +41,9 @@ export default {
         password: hashedPw,
       });
 
-      res.status(201).json({ message: 'User has been created', user });
+      const token = tokenForUser(user);
+
+      res.status(201).json({ message: 'User has been created', token, userId: user.id });
 
     } catch (err: any) {
       if (!err.statusCode) {
@@ -53,14 +69,7 @@ export default {
         error.statusCode = 401;
         throw error;
       }
-      const token = jwt.sign(
-        {
-          email: user.email,
-          userId: user.id,
-        },
-        'somesupersecretstring',
-        { expiresIn: '1h' }
-      );
+      const token = tokenForUser(user);
       res.status(200).json({ token, userId: user.id });
       return;
     } catch (err: any) {
