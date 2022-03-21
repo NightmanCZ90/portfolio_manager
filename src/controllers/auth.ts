@@ -6,7 +6,7 @@ import { NextFunction, Response } from 'express';
 import { User } from '../models/user';
 import UserRepo from '../repos/user-repo';
 import { TypedRequestBody } from '../models/routes';
-import { ValidationError } from '../server';
+import { StatusError } from '../server';
 import { Auth } from '../models/auth';
 import config from '../config';
 
@@ -28,7 +28,7 @@ const authController = {
     const errors = validationResult(req);
     try {
       if (!errors.isEmpty()) {
-        const error: ValidationError = new Error('Validation failed.');
+        const error: StatusError = new Error('Validation failed.');
         error.statusCode = 422;
         error.data = errors.array();
         throw error;
@@ -59,13 +59,13 @@ const authController = {
       const user = await UserRepo.findByEmail(email);
 
       if (!user) {
-        const error: ValidationError = new Error('A user with this email does not exist.');
+        const error: StatusError = new Error('A user with this email does not exist.');
         error.statusCode = 401;
         throw error;
       }
       const isEqual = await bcrypt.compare(password, user.password);
       if (!isEqual) {
-        const error: ValidationError = new Error('Wrong password.');
+        const error: StatusError = new Error('Wrong password.');
         error.statusCode = 401;
         throw error;
       }

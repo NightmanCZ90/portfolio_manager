@@ -4,7 +4,7 @@ import cors from 'cors';
 import usersRoutes from './routes/users';
 import authRoutes from './routes/auth';
 
-export interface ValidationError extends Error {
+export interface StatusError extends Error {
   statusCode?: number;
   data?: any;
 }
@@ -24,7 +24,7 @@ app.use(usersRoutes);
 app.use(authRoutes);
 
 /** Global error handling */
-app.use((error: ValidationError, req: Request, res: Response, next: NextFunction) => {
+app.use((error: StatusError, req: Request, res: Response, next: NextFunction) => {
   console.log(error);
   const status = error.statusCode || 500;
   const message = error.message;
