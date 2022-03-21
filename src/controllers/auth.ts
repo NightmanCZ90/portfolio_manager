@@ -11,12 +11,10 @@ import { Auth } from '../models/auth';
 import config from '../config';
 
 const tokenForUser = (user: User) => {
-  const timestamp = new Date().getTime();
   return jwt.sign(
     {
       email: user.email,
       sub: user.id,
-      iat: timestamp,
     },
     config.tokenSecret,
     { expiresIn: config.jwtExpirySeconds }
