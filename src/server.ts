@@ -8,16 +8,21 @@ export interface ValidationError extends Error {
   data?: any;
 }
 
+/** App initialization */
 const app = express();
 
+/** App use */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+/** CORS */
 app.use(cors());
 
+/** Routing */
 app.use(usersRoutes);
 app.use(authRoutes);
 
+/** Global error handling */
 app.use((error: ValidationError, req: Request, res: Response, next: NextFunction) => {
   console.log(error);
   const status = error.statusCode || 500;
