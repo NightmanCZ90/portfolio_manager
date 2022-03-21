@@ -1,4 +1,4 @@
-export default (rows: any[]) => {
+const toCamelCase = (rows: any[]) => {
   return rows.map(row => {
     const replaced: any = {};
 
@@ -10,3 +10,4 @@ export default (rows: any[]) => {
   });
 };
 
+export default toCamelCase;

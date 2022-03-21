@@ -23,7 +23,7 @@ const tokenForUser = (user: User) => {
     );
 }
 
-export default {
+const authController = {
   signup: async (req: TypedRequestBody<User>, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     try {
@@ -81,3 +81,5 @@ export default {
     };
   },
 }
+
+export default authController;
