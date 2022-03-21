@@ -9,7 +9,7 @@ exports.up = pgm => {
       created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
       email VARCHAR(40) UNIQUE NOT NULL,
-      password CHAR(64) NOT NULL,
+      password TEXT NOT NULL,
       first_name VARCHAR(40),
       last_name VARCHAR(40),
       role VARCHAR(20),
