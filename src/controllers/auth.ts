@@ -1,14 +1,14 @@
 import { validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { NextFunction, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 import { User } from '../models/user';
 import UserRepo from '../repos/user-repo';
-import { TypedRequestBody } from '../models/routes';
 import { StatusError } from '../server';
 import { Auth } from '../models/auth';
 import config from '../config';
+import { RequestBody } from '../models/routes';
 
 const tokenForUser = (user: User) => {
   return jwt.sign(
@@ -22,9 +22,10 @@ const tokenForUser = (user: User) => {
 }
 
 const authController = {
-  signup: async (req: TypedRequestBody<User>, res: Response, next: NextFunction) => {
-    const errors = validationResult(req);
+  signup: async (req: RequestBody<User>, res: Response, next: NextFunction) => {
     try {
+      const errors = validationResult(req);
+
       if (!errors.isEmpty()) {
         const error: StatusError = new Error('Validation failed.');
         error.statusCode = 422;
@@ -50,7 +51,7 @@ const authController = {
       next(err);
     };
   },
-  login: async (req: TypedRequestBody<Auth>, res: Response, next: NextFunction) => {
+  login: async (req: RequestBody<Auth>, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
 
     try {
@@ -58,7 +59,7 @@ const authController = {
 
       if (!user) {
         const error: StatusError = new Error('A user with this email does not exist.');
-        error.statusCode = 401;
+        error.statusCode = 404;
         throw error;
       }
       const isEqual = await bcrypt.compare(password, user.password);
