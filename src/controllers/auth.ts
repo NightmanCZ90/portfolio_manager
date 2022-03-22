@@ -52,9 +52,8 @@ const authController = {
     };
   },
   login: async (req: RequestBody<Auth>, res: Response, next: NextFunction) => {
-    const { email, password } = req.body;
-
     try {
+      const { email, password } = req.body;
       const user = await UserRepo.findByEmail(email);
 
       if (!user) {
