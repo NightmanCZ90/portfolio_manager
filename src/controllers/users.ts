@@ -10,7 +10,7 @@ const isCurrentUser = async (req: AuthRequest) => {
   const userId = parseInt(id);
 
   if (req.body.userId !== userId) {
-    const error: StatusError = new Error('Not authenticated.');
+    const error: StatusError = new Error('Not authorized.');
     error.statusCode = 403;
     throw error;
   }
