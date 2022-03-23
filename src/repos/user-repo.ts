@@ -1,7 +1,7 @@
 import pool from '../database/pool';
 import { Auth } from '../models/auth';
 import { User } from '../models/user';
-import toCamelCase from './utils/to-camel-case';
+import { toCamelCase } from '../utils/helpers';
 
 class UserRepo {
   static async find() {
