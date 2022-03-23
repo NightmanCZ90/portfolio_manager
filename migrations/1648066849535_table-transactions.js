@@ -6,7 +6,7 @@ exports.up = pgm => {
   pgm.sql(`
     CREATE TABLE IF NOT EXISTS portfolios (
       id SERIAL PRIMARY KEY NOT NULL,
-      name VARCHAR(20),
+      name VARCHAR(20) NOT NULL,
       description VARCHAR(240),
       color CHAR(6),
       url TEXT,
