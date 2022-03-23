@@ -4,6 +4,16 @@ exports.shorthands = undefined;
 
 exports.up = pgm => {
   pgm.sql(`
+    CREATE TABLE IF NOT EXISTS portfolios (
+      id SERIAL PRIMARY KEY NOT NULL,
+      name VARCHAR(20),
+      description VARCHAR(240),
+      color CHAR(6),
+      url TEXT,
+      user_id INTEGER NOT NULL REFERENCES users(id),
+      pm_id INTEGER REFERENCES users(id)
+    );
+
     CREATE TABLE IF NOT EXISTS transactions (
       id SERIAL PRIMARY KEY NOT NULL,
       created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -18,8 +28,7 @@ exports.up = pgm => {
       execution VARCHAR(20),
       commissions NUMERIC,
       notes TEXT,
-      user_id INTEGER NOT NULL REFERENCES users(id),
-      transaction_made_by_pm BOOLEAN
+      portfolio_id INTEGER NOT NULL REFERENCES portfolios(id)
     );
   `);
 };
@@ -27,5 +36,6 @@ exports.up = pgm => {
 exports.down = pgm => {
   pgm.sql(`
     DROP TABLE transactions;
+    DROP TABLE portfolios;
   `);
 };

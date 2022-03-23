@@ -31,6 +31,5 @@ export interface Transaction {
   execution: ExecutionType;
   commissions: number;
   notes: string;
-  userId: number;
-  transactionMadeByPM: boolean;
+  portfolioId: number;
 }
