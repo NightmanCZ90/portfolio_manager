@@ -7,3 +7,9 @@ export interface User {
   role: string;
   portfolioManager?: number;
 }
+
+export enum Role {
+  Investor = 'investor',
+  PortfolioManager = 'portfolioManager',
+  Administrator = 'administrator'
+}

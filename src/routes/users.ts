@@ -1,7 +1,9 @@
 import { Router } from 'express';
+import { body } from 'express-validator';
 
 import usersController from '../controllers/users';
 import isAuth from '../middlewares/is-auth';
+import { isRoleValid } from '../utils/helpers';
 
 const router = Router();
 
@@ -10,6 +12,20 @@ router.get('/users', isAuth, usersController.getAllUsers);
 
 router.get('/users/:id', isAuth, usersController.getUser);
 
-router.post('/users/:id', isAuth, usersController.getAllUsers);
+router.put('/users/:id', isAuth, [
+  body('firstName')
+    .isLength({
+      max: 40,
+    })
+    .withMessage('Max length of first name is 40 chars.'),
+  body('lastName')
+    .isLength({
+      max: 40,
+    })
+    .withMessage('Max length of last name is 40 chars.'),
+  body('role')
+    .custom(isRoleValid)
+    .withMessage('Invalid user role'),
+], usersController.updateUser);
 
 export default router;

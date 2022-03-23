@@ -52,14 +52,18 @@ class UserRepo {
     return toCamelCase(rows)[0];
   }
 
-  // static async update(id, username, bio) {
-  //   const { rows } = await pool.query(
-  //     'UPDATE users SET username = $1, bio = $2 WHERE id = $3 RETURNING *;',
-  //     [username, bio, id]
-  //   ) || {};
+  static async update(user: User) {
+    const { id, firstName, lastName, role } = user;
+    const { rows } = await pool.query(`
+      UPDATE users
+      SET first_name = $1, last_name = $2, role = $3, updated_at = NOW()
+      WHERE id = $4 RETURNING *;
+    `, [firstName, lastName, role, id]
+    ) || {};
+    if (!rows) return null;
 
-  //   return toCamelCase(rows)[0];
-  // }
+    return toCamelCase(rows)[0];
+  }
 
   // static async delete(id) {
   //   const { rows } = await pool.query(
