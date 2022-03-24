@@ -15,7 +15,7 @@ const isAuth = (req: Request, res: Response, next: NextFunction) => {
   try {
     decodedToken = jwt.verify(token, config.tokenSecret) as jwt.JwtPayload;
   } catch (err: any) {
-    err.statusCode = 500;
+    err.statusCode = 401;
     throw err;
   }
   if (!decodedToken) {

@@ -5,14 +5,11 @@ import usersController from '../controllers/users';
 import isAuth from '../middlewares/is-auth';
 import { isRoleValid } from '../utils/helpers';
 
-const router = Router();
+/**
+ * Validations
+ */
 
-// TODO: Refactor to only show users you manage with limited data
-router.get('/users', isAuth, usersController.getAllUsers);
-
-router.get('/users/:id', isAuth, usersController.getUser);
-
-router.put('/users/:id', isAuth, [
+const userValidation = [
   body('firstName')
     .isLength({
       max: 40,
@@ -26,6 +23,32 @@ router.put('/users/:id', isAuth, [
   body('role')
     .custom(isRoleValid)
     .withMessage('Invalid user role'),
-], usersController.updateUser);
+];
+
+/**
+ * Routes
+ */
+
+const router = Router();
+
+// TODO: Refactor to only show users you manage with limited data
+router.get(
+  '/users',
+  isAuth,
+  usersController.getAllUsers
+);
+
+router.get(
+  '/users/:id',
+  isAuth,
+  usersController.getUser
+);
+
+router.put(
+  '/users/:id',
+  isAuth,
+  userValidation,
+  usersController.updateUser
+);
 
 export default router;

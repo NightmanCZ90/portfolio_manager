@@ -5,6 +5,10 @@ import { User } from '../models/user';
 import UserRepo from '../repos/user-repo';
 import { StatusError } from '../server';
 
+/**
+ * Helpers
+ */
+
 const isCurrentUser = async (req: AuthRequest) => {
   const { id } = req.params;
   const userId = parseInt(id);
@@ -26,6 +30,10 @@ const isCurrentUser = async (req: AuthRequest) => {
   return user;
 }
 
+/**
+ * Controllers
+ */
+
 const usersController = {
   getAllUsers: async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -34,6 +42,7 @@ const usersController = {
     } catch (err: any) {
       if (!err.statusCode) {
         err.statusCode = 500;
+        err.message = 'Retrieving users failed.';
       }
       next(err);
     }
@@ -55,6 +64,7 @@ const usersController = {
     } catch (err: any) {
       if (!err.statusCode) {
         err.statusCode = 500;
+        err.message = 'Retrieving user failed.';
       }
       next(err);
     };
@@ -79,6 +89,7 @@ const usersController = {
     } catch (err: any) {
       if (!err.statusCode) {
         err.statusCode = 500;
+        err.message = 'Updating user failed.';
       }
       next(err);
     };
