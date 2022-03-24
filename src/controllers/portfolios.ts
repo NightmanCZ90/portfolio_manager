@@ -35,6 +35,7 @@ const checkAndReturnPortfolio = async (req: AuthRequest) => {
  */
 
 const portfoliosController = {
+
   getUsersPortfolios: async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const portfolios = await PortfolioRepo.findAllByUserId(req.body.userId);
