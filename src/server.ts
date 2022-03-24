@@ -3,6 +3,7 @@ import cors from 'cors';
 
 import usersRoutes from './routes/users';
 import authRoutes from './routes/auth';
+import portfoliosRoutes from './routes/portfolios';
 
 export interface StatusError extends Error {
   statusCode?: number;
@@ -22,6 +23,7 @@ app.use(cors());
 /** Routing */
 app.use(usersRoutes);
 app.use(authRoutes);
+app.use(portfoliosRoutes);
 
 /** Global error handling */
 app.use((error: StatusError, req: Request, res: Response, next: NextFunction) => {

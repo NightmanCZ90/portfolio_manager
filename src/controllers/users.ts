@@ -8,13 +8,14 @@ import { StatusError } from '../server';
 const isCurrentUser = async (req: AuthRequest) => {
   const { id } = req.params;
   const userId = parseInt(id);
-  const user = await UserRepo.findById(userId);
 
   if (req.body.userId !== userId) {
-    const error: StatusError = new Error('Not authenticated.');
+    const error: StatusError = new Error('Not authorized.');
     error.statusCode = 403;
     throw error;
   }
+
+  const user = await UserRepo.findById(userId);
 
   if (!user) {
     const error: StatusError = new Error('User with this id does not exist.');

@@ -4,6 +4,7 @@ import { User } from '../models/user';
 import { toCamelCase } from '../utils/helpers';
 
 class UserRepo {
+
   static async find() {
     const { rows } = await pool.query('SELECT * FROM users;', []) || {};
     if (!rows) return null;
