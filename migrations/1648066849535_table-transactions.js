@@ -6,6 +6,8 @@ exports.up = pgm => {
   pgm.sql(`
     CREATE TABLE IF NOT EXISTS portfolios (
       id SERIAL PRIMARY KEY NOT NULL,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
       name VARCHAR(20) NOT NULL,
       description VARCHAR(240),
       color CHAR(6),
@@ -28,7 +30,8 @@ exports.up = pgm => {
       execution VARCHAR(20),
       commissions NUMERIC,
       notes TEXT,
-      portfolio_id INTEGER NOT NULL REFERENCES portfolios(id)
+      user_id INTEGER NOT NULL REFERENCES users(id),
+      portfolio_id INTEGER NOT NULL REFERENCES portfolios(id) ON DELETE CASCADE
     );
   `);
 };
