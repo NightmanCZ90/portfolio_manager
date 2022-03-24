@@ -18,9 +18,9 @@ export enum ExecutionType {
 }
 
 export interface Transaction {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
+  id?: number;
+  createdAt?: string;
+  updatedAt?: string;
   stockName: string;
   stockSector: string;
   transactionTime: string;
@@ -31,5 +31,6 @@ export interface Transaction {
   execution: ExecutionType;
   commissions: number;
   notes: string;
+  userId: number;
   portfolioId: number;
 }
