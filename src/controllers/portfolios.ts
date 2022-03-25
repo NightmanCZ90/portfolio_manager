@@ -9,10 +9,7 @@ import { StatusError } from '../server';
  * Helpers
  */
 
-const checkAndReturnPortfolio = async (req: AuthRequest) => {
-  const { id } = req.params;
-  const portfolioId = parseInt(id);
-
+export const checkAndReturnPortfolio = async (req: AuthRequest, portfolioId: number) => {
   const portfolio = await PortfolioRepo.findById(portfolioId);
 
   if (!portfolio) {
@@ -22,7 +19,7 @@ const checkAndReturnPortfolio = async (req: AuthRequest) => {
   }
 
   if (req.body.userId !== portfolio.userId) {
-    const error: StatusError = new Error('Not authorized.');
+    const error: StatusError = new Error('Not authorized to this access portfolio.');
     error.statusCode = 403;
     throw error;
   }
@@ -59,7 +56,7 @@ const portfoliosController = {
         error.data = errors.array();
         throw error;
       }
-      const portfolio = await checkAndReturnPortfolio(req);
+      const portfolio = await checkAndReturnPortfolio(req, parseInt(req.params.id));
 
       res.status(200).json({ portfolio });
     } catch (err: any) {
@@ -108,7 +105,7 @@ const portfoliosController = {
         throw error;
       }
 
-      const portfolio = await checkAndReturnPortfolio(req);
+      const portfolio = await checkAndReturnPortfolio(req, parseInt(req.params.id));
       const { name, description, color, url } = req.body;
 
       const updatedPortfolio = await PortfolioRepo.update({ ...portfolio, name, description, color, url });
@@ -134,7 +131,7 @@ const portfoliosController = {
         throw error;
       }
 
-      await checkAndReturnPortfolio(req);
+      await checkAndReturnPortfolio(req, parseInt(req.params.id));
       await PortfolioRepo.delete(req.params.id);
 
       res.status(200).json({ message: 'Success.' });

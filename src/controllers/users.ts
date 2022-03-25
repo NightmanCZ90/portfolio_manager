@@ -14,7 +14,7 @@ const isCurrentUser = async (req: AuthRequest) => {
   const userId = parseInt(id);
 
   if (req.body.userId !== userId) {
-    const error: StatusError = new Error('Not authorized.');
+    const error: StatusError = new Error('Not authorized to access this user.');
     error.statusCode = 403;
     throw error;
   }
