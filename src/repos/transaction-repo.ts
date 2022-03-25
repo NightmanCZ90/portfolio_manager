@@ -6,6 +6,7 @@ class TransactionRepo {
 
   static async insert(transaction: Transaction) {
     const { stockName, stockSector, transactionTime, transactionType, numShares, price, currency, execution, commissions, notes, userId, portfolioId } = transaction;
+
     const { rows } = await pool.query(`
       INSERT INTO transactions (stock_name, stock_sector, transaction_time, transaction_type, num_shares, price, currency, execution, commissions, notes, user_id, portfolio_id)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *;

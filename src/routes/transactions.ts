@@ -19,6 +19,7 @@ const transactionValidation = [
     })
     .withMessage('Max length of stock name is 20 chars.'),
   body('stockSector')
+    .optional()
     .isLength({
       max: 20,
     })
@@ -46,8 +47,10 @@ const transactionValidation = [
     .custom(isExecutionTypeValid)
     .withMessage('Invalid execution type.'),
   body('commissions')
+    .optional()
     .isNumeric({ no_symbols: true }),
   body('notes')
+    .optional()
     .isString(),
 ];
 

@@ -11,11 +11,13 @@ import { isRoleValid } from '../utils/helpers';
 
 const userValidation = [
   body('firstName')
+    .optional()
     .isLength({
       max: 40,
     })
     .withMessage('Max length of first name is 40 chars.'),
   body('lastName')
+    .optional()
     .isLength({
       max: 40,
     })
