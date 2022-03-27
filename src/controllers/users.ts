@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { AuthRequest, AuthRequestBody } from '../models/routes';
-import { BaseUser, User } from '../models/user';
+import { BaseUser } from '../models/user';
 import UserRepo from '../repos/user-repo';
 import { StatusError } from '../server';
 

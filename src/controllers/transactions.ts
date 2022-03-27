@@ -2,7 +2,6 @@ import { NextFunction, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { AuthRequest, AuthRequestBody } from '../models/routes';
 import { BaseTransaction, Transaction } from '../models/transaction';
-import PortfolioRepo from '../repos/portfolio-repo';
 import TransactionRepo from '../repos/transaction-repo';
 import { StatusError } from '../server';
 import { checkAndReturnPortfolio } from './portfolios';

@@ -4,7 +4,6 @@ import { body } from 'express-validator';
 import transactionsController from '../controllers/transactions';
 import isAuth from '../middlewares/is-auth';
 import { isExecutionTypeValid, isTransactionTypeValid } from '../utils/helpers';
-// import { isRoleValid } from '../utils/helpers';
 
 /**
  * Validations
