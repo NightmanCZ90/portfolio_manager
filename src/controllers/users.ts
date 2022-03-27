@@ -50,14 +50,6 @@ const usersController = {
 
   getUser: async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
-      const errors = validationResult(req);
-
-      if (!errors.isEmpty()) {
-        const error: StatusError = new Error('Validation failed.');
-        error.statusCode = 422;
-        error.data = errors.array();
-        throw error;
-      }
       const user = await isCurrentUser(req);
 
       res.status(200).json({ user });

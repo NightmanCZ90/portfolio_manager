@@ -49,14 +49,6 @@ const portfoliosController = {
 
   getPortfolio: async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
-      const errors = validationResult(req);
-
-      if (!errors.isEmpty()) {
-        const error: StatusError = new Error('Validation failed.');
-        error.statusCode = 422;
-        error.data = errors.array();
-        throw error;
-      }
       const portfolio = await checkAndReturnPortfolio(req, parseInt(req.params.id));
 
       res.status(200).json({ portfolio });
@@ -123,15 +115,6 @@ const portfoliosController = {
 
   deletePortfolio: async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
-      const errors = validationResult(req);
-
-      if (!errors.isEmpty()) {
-        const error: StatusError = new Error('Validation failed.');
-        error.statusCode = 422;
-        error.data = errors.array();
-        throw error;
-      }
-
       await checkAndReturnPortfolio(req, parseInt(req.params.id));
       await PortfolioRepo.delete(req.params.id);
 
