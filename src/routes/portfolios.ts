@@ -17,6 +17,7 @@ const portfolioValidation = [
     })
     .withMessage('Max length of portfolio name is 20 chars.'),
   body('description')
+    .optional()
     .isLength({
       max: 240,
     })
@@ -28,6 +29,7 @@ const portfolioValidation = [
     })
     .withMessage('Length of portfolio color must be 6 chars.'),
   body('url')
+    .optional()
     .isString()
 ];
 

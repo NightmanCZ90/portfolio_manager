@@ -17,10 +17,7 @@ export enum ExecutionType {
   LowCost = 'lowCost',
 }
 
-export interface Transaction {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
+export interface BaseTransaction {
   stockName: string;
   stockSector: string;
   transactionTime: string;
@@ -31,5 +28,11 @@ export interface Transaction {
   execution: ExecutionType;
   commissions: number;
   notes: string;
+  userId?: number;
   portfolioId: number;
+}
+export interface Transaction extends BaseTransaction {
+  id?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }

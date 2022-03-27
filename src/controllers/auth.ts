@@ -1,7 +1,7 @@
 import { validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
 
 import { User } from '../models/user';
 import UserRepo from '../repos/user-repo';
@@ -22,7 +22,7 @@ const tokenForUser = (user: User) => {
 }
 
 const authController = {
-  signup: async (req: RequestBody<User>, res: Response, next: NextFunction) => {
+  signup: async (req: RequestBody<Auth>, res: Response, next: NextFunction) => {
     try {
       const errors = validationResult(req);
 

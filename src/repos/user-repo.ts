@@ -1,59 +1,55 @@
 import pool from '../database/pool';
 import { Auth } from '../models/auth';
-import { User } from '../models/user';
+import { BaseUser, User } from '../models/user';
 import { toCamelCase } from '../utils/helpers';
 
 class UserRepo {
 
-  static async find() {
+  static async find(): Promise<User[]> {
     const { rows } = await pool.query('SELECT * FROM users;', []) || {};
-    if (!rows) return null;
 
-    return toCamelCase(rows);
+    return toCamelCase(rows!);
   }
 
-  static async findById(id: number) {
+  static async findById(id: number): Promise<User> {
     const { rows } = await pool.query(
       'SELECT * FROM users WHERE id = $1;',
       [id]
     ) || {};
-    if (!rows) return null;
 
-    return toCamelCase(rows)[0];
+    return toCamelCase(rows!)[0];
   }
 
-  static async findByEmail(email: string) {
+  static async findByEmail(email: string): Promise<User> {
     const { rows } = await pool.query(
       'SELECT * FROM users WHERE email = $1;',
       [email]
     ) || {};
-    if (!rows) return null;
 
-    return toCamelCase(rows)[0];
+    return toCamelCase(rows!)[0];
   }
 
-  static async register({ email, password }: Auth) {
+  static async register({ email, password }: Auth): Promise<User> {
     const { rows } = await pool.query(
       'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *;',
       [email, password]
     ) || {};
-    if (!rows) return null;
 
-    return toCamelCase(rows)[0];
+    return toCamelCase(rows!)[0];
   }
 
-  static async insert(user: User) {
+  // for testing purposes
+  static async _insert(user: BaseUser): Promise<User> {
     const { email, password, firstName, lastName, role } = user;
     const { rows } = await pool.query(
       'INSERT INTO users (email, password, first_name, last_name, role) VALUES ($1, $2, $3, $4, $5) RETURNING *;',
       [email, password, firstName, lastName, role]
     ) || {};
-    if (!rows) return null;
 
-    return toCamelCase(rows)[0];
+    return toCamelCase(rows!)[0];
   }
 
-  static async update(user: User) {
+  static async update(user: User): Promise<User> {
     const { id, firstName, lastName, role } = user;
     const { rows } = await pool.query(`
       UPDATE users
@@ -61,9 +57,8 @@ class UserRepo {
       WHERE id = $4 RETURNING *;
     `, [firstName, lastName, role, id]
     ) || {};
-    if (!rows) return null;
 
-    return toCamelCase(rows)[0];
+    return toCamelCase(rows!)[0];
   }
 }
 

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { AuthRequest, AuthRequestBody } from '../models/routes';
-import { User } from '../models/user';
+import { BaseUser } from '../models/user';
 import UserRepo from '../repos/user-repo';
 import { StatusError } from '../server';
 
@@ -14,7 +14,7 @@ const isCurrentUser = async (req: AuthRequest) => {
   const userId = parseInt(id);
 
   if (req.body.userId !== userId) {
-    const error: StatusError = new Error('Not authorized.');
+    const error: StatusError = new Error('Not authorized to access this user.');
     error.statusCode = 403;
     throw error;
   }
@@ -50,14 +50,6 @@ const usersController = {
 
   getUser: async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
-      const errors = validationResult(req);
-
-      if (!errors.isEmpty()) {
-        const error: StatusError = new Error('Validation failed.');
-        error.statusCode = 422;
-        error.data = errors.array();
-        throw error;
-      }
       const user = await isCurrentUser(req);
 
       res.status(200).json({ user });
@@ -70,7 +62,7 @@ const usersController = {
     };
   },
 
-  updateUser: async (req: AuthRequestBody<User>, res: Response, next: NextFunction) => {
+  updateUser: async (req: AuthRequestBody<BaseUser>, res: Response, next: NextFunction) => {
     try {
       const errors = validationResult(req);
 

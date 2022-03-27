@@ -1,9 +1,27 @@
+import { ExecutionType, TransactionType } from '../models/transaction';
 import { Role } from '../models/user'
 
 export const isRoleValid = (role: string) =>
-  role === Role.Investor
-  || role === Role.PortfolioManager
-  || role === Role.Administrator;
+  role === Role.Investor ||
+  role === Role.PortfolioManager ||
+  role === Role.Administrator;
+
+export const isTransactionTypeValid = (transactionType: string) =>
+  transactionType === TransactionType.Buy ||
+  transactionType === TransactionType.Sell ||
+  transactionType === TransactionType.BuyToCover ||
+  transactionType === TransactionType.SellShort ||
+  transactionType === TransactionType.DRIP ||
+  transactionType === TransactionType.Dividends ||
+  transactionType === TransactionType.Split;
+
+export const isExecutionTypeValid = (execution: string) =>
+  execution === ExecutionType.FIFO ||
+  execution === ExecutionType.LIFO ||
+  execution === ExecutionType.WeightedAverage ||
+  execution === ExecutionType.SpecificLots ||
+  execution === ExecutionType.HighCost ||
+  execution === ExecutionType.LowCost;
 
 export const toCamelCase = (rows: any[]) => rows.map(row => {
   const replaced: any = {};

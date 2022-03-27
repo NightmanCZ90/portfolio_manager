@@ -1,9 +1,11 @@
 import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 
 import usersRoutes from './routes/users';
 import authRoutes from './routes/auth';
 import portfoliosRoutes from './routes/portfolios';
+import transactionsRoutes from './routes/transactions';
 
 export interface StatusError extends Error {
   statusCode?: number;
@@ -13,17 +15,17 @@ export interface StatusError extends Error {
 /** App initialization */
 const app = express();
 
-/** App use */
+/** App configuration */
+app.use(helmet());
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-/** CORS */
-app.use(cors());
 
 /** Routing */
 app.use(usersRoutes);
 app.use(authRoutes);
 app.use(portfoliosRoutes);
+app.use(transactionsRoutes);
 
 /** Global error handling */
 app.use((error: StatusError, req: Request, res: Response, next: NextFunction) => {

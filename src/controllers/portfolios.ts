@@ -1,6 +1,6 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
 import { validationResult } from 'express-validator';
-import { Portfolio } from '../models/portfolio';
+import { BasePortfolio } from '../models/portfolio';
 import { AuthRequest, AuthRequestBody } from '../models/routes';
 import PortfolioRepo from '../repos/portfolio-repo';
 import { StatusError } from '../server';
@@ -9,10 +9,7 @@ import { StatusError } from '../server';
  * Helpers
  */
 
-const checkAndReturnPortfolio = async (req: AuthRequest) => {
-  const { id } = req.params;
-  const portfolioId = parseInt(id);
-
+export const checkAndReturnPortfolio = async (req: AuthRequest, portfolioId: number) => {
   const portfolio = await PortfolioRepo.findById(portfolioId);
 
   if (!portfolio) {
@@ -22,7 +19,7 @@ const checkAndReturnPortfolio = async (req: AuthRequest) => {
   }
 
   if (req.body.userId !== portfolio.userId) {
-    const error: StatusError = new Error('Not authorized.');
+    const error: StatusError = new Error('Not authorized to access this portfolio.');
     error.statusCode = 403;
     throw error;
   }
@@ -35,9 +32,11 @@ const checkAndReturnPortfolio = async (req: AuthRequest) => {
  */
 
 const portfoliosController = {
+
   getUsersPortfolios: async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const portfolios = await PortfolioRepo.findAllByUserId(req.body.userId);
+
       res.status(200).json({ portfolios });
     } catch (err: any) {
       if (!err.statusCode) {
@@ -50,15 +49,7 @@ const portfoliosController = {
 
   getPortfolio: async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
-      const errors = validationResult(req);
-
-      if (!errors.isEmpty()) {
-        const error: StatusError = new Error('Validation failed.');
-        error.statusCode = 422;
-        error.data = errors.array();
-        throw error;
-      }
-      const portfolio = await checkAndReturnPortfolio(req);
+      const portfolio = await checkAndReturnPortfolio(req, parseInt(req.params.id));
 
       res.status(200).json({ portfolio });
     } catch (err: any) {
@@ -70,7 +61,7 @@ const portfoliosController = {
     };
   },
 
-  createPortfolio: async (req: AuthRequestBody<Portfolio>, res: Response, next: NextFunction) => {
+  createPortfolio: async (req: AuthRequestBody<BasePortfolio>, res: Response, next: NextFunction) => {
     try {
       const errors = validationResult(req);
 
@@ -96,7 +87,7 @@ const portfoliosController = {
     };
   },
 
-  updatePortfolio: async (req: AuthRequestBody<Portfolio>, res: Response, next: NextFunction) => {
+  updatePortfolio: async (req: AuthRequestBody<BasePortfolio>, res: Response, next: NextFunction) => {
     try {
       const errors = validationResult(req);
 
@@ -107,7 +98,7 @@ const portfoliosController = {
         throw error;
       }
 
-      const portfolio = await checkAndReturnPortfolio(req);
+      const portfolio = await checkAndReturnPortfolio(req, parseInt(req.params.id));
       const { name, description, color, url } = req.body;
 
       const updatedPortfolio = await PortfolioRepo.update({ ...portfolio, name, description, color, url });
@@ -124,16 +115,7 @@ const portfoliosController = {
 
   deletePortfolio: async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
-      const errors = validationResult(req);
-
-      if (!errors.isEmpty()) {
-        const error: StatusError = new Error('Validation failed.');
-        error.statusCode = 422;
-        error.data = errors.array();
-        throw error;
-      }
-
-      await checkAndReturnPortfolio(req);
+      await checkAndReturnPortfolio(req, parseInt(req.params.id));
       await PortfolioRepo.delete(req.params.id);
 
       res.status(200).json({ message: 'Success.' });

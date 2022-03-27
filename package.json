@@ -5,15 +5,17 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./dist/index.js --env=production",
-    "start:dev": "ts-node-dev ./src/index.ts",
+    "dev": "ts-node-dev ./src/index.ts",
     "migrate": "node-pg-migrate"
   },
   "author": "Jan Novak",
   "license": "ISC",
   "dependencies": {
+    "@types/helmet": "^4.0.0",
     "bcryptjs": "^2.4.3",
     "express": "^4.17.3",
     "express-validator": "^6.14.0",
+    "helmet": "^5.0.2",
     "jest": "^27.5.1",
     "jsonwebtoken": "^8.5.1",
     "node-pg-migrate": "^6.2.1",
