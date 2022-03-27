@@ -1,7 +1,7 @@
 import { NextFunction, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { AuthRequest, AuthRequestBody } from '../models/routes';
-import { Transaction } from '../models/transaction';
+import { BaseTransaction } from '../models/transaction';
 import PortfolioRepo from '../repos/portfolio-repo';
 import TransactionRepo from '../repos/transaction-repo';
 import { StatusError } from '../server';
@@ -21,7 +21,7 @@ const checkAndReturnTransaction = async (req: AuthRequest) => {
 
  const transactionsController = {
 
-  createTransaction: async (req: AuthRequestBody<Transaction>, res: Response, next: NextFunction) => {
+  createTransaction: async (req: AuthRequestBody<BaseTransaction>, res: Response, next: NextFunction) => {
     try {
       const errors = validationResult(req);
 

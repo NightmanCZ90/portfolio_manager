@@ -1,6 +1,6 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
 import { validationResult } from 'express-validator';
-import { Portfolio } from '../models/portfolio';
+import { BasePortfolio } from '../models/portfolio';
 import { AuthRequest, AuthRequestBody } from '../models/routes';
 import PortfolioRepo from '../repos/portfolio-repo';
 import { StatusError } from '../server';
@@ -68,7 +68,7 @@ const portfoliosController = {
     };
   },
 
-  createPortfolio: async (req: AuthRequestBody<Portfolio>, res: Response, next: NextFunction) => {
+  createPortfolio: async (req: AuthRequestBody<BasePortfolio>, res: Response, next: NextFunction) => {
     try {
       const errors = validationResult(req);
 
@@ -94,7 +94,7 @@ const portfoliosController = {
     };
   },
 
-  updatePortfolio: async (req: AuthRequestBody<Portfolio>, res: Response, next: NextFunction) => {
+  updatePortfolio: async (req: AuthRequestBody<BasePortfolio>, res: Response, next: NextFunction) => {
     try {
       const errors = validationResult(req);
 

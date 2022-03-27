@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { AuthRequest, AuthRequestBody } from '../models/routes';
-import { User } from '../models/user';
+import { BaseUser, User } from '../models/user';
 import UserRepo from '../repos/user-repo';
 import { StatusError } from '../server';
 
@@ -70,7 +70,7 @@ const usersController = {
     };
   },
 
-  updateUser: async (req: AuthRequestBody<User>, res: Response, next: NextFunction) => {
+  updateUser: async (req: AuthRequestBody<BaseUser>, res: Response, next: NextFunction) => {
     try {
       const errors = validationResult(req);
 
