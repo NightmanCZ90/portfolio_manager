@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,4 +5,63 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model pgmigrations {
+  id     Int      @id @default(autoincrement())
+  name   String   @db.VarChar(255)
+  run_on DateTime @db.Timestamp(6)
+}
+
+model portfolios {
+  id                              Int            @id @default(autoincrement())
+  created_at                      DateTime?      @default(now()) @db.Timestamptz(6)
+  updated_at                      DateTime?      @default(now()) @db.Timestamptz(6)
+  name                            String         @db.VarChar(20)
+  description                     String?        @db.VarChar(240)
+  color                           String?        @db.Char(6)
+  url                             String?
+  user_id                         Int
+  pm_id                           Int?
+  users_portfolios_pm_idTousers   users?         @relation("portfolios_pm_idTousers", fields: [pm_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_portfolios_user_idTousers users          @relation("portfolios_user_idTousers", fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  transactions                    transactions[]
+}
+
+model transactions {
+  id               Int        @id @default(autoincrement())
+  created_at       DateTime?  @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime?  @default(now()) @db.Timestamptz(6)
+  stock_name       String     @db.VarChar(20)
+  stock_sector     String?    @db.VarChar(20)
+  transaction_time DateTime   @db.Timestamptz(6)
+  transaction_type String     @db.VarChar(40)
+  num_shares       Int
+  price            Int
+  currency         String     @db.VarChar(4)
+  execution        String     @db.VarChar(20)
+  commissions      Int?
+  notes            String?
+  user_id          Int
+  portfolio_id     Int
+  portfolios       portfolios @relation(fields: [portfolio_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users            users      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model users {
+  id                                   Int            @id @default(autoincrement())
+  created_at                           DateTime?      @default(now()) @db.Timestamptz(6)
+  updated_at                           DateTime?      @default(now()) @db.Timestamptz(6)
+  email                                String         @unique @db.VarChar(40)
+  password                             String
+  first_name                           String?        @db.VarChar(40)
+  last_name                            String?        @db.VarChar(40)
+  role                                 String?        @db.VarChar(20)
+  portfolio_manager                    Int?
+  is_active                            Boolean?       @default(true)
+  users                                users?         @relation("usersTousers_portfolio_manager", fields: [portfolio_manager], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  portfolios_portfolios_pm_idTousers   portfolios[]   @relation("portfolios_pm_idTousers")
+  portfolios_portfolios_user_idTousers portfolios[]   @relation("portfolios_user_idTousers")
+  transactions                         transactions[]
+  other_users                          users[]        @relation("usersTousers_portfolio_manager")
 }
