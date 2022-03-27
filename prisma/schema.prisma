@@ -15,53 +15,50 @@ model pgmigrations {
 
 model portfolios {
   id                              Int            @id @default(autoincrement())
-  created_at                      DateTime?      @default(now()) @db.Timestamptz(6)
-  updated_at                      DateTime?      @default(now()) @db.Timestamptz(6)
+  createdAt                       DateTime?      @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt                       DateTime?      @default(now()) @db.Timestamptz(6) @map("updated_at")
   name                            String         @db.VarChar(20)
   description                     String?        @db.VarChar(240)
   color                           String?        @db.Char(6)
   url                             String?
-  user_id                         Int
-  pm_id                           Int?
-  users_portfolios_pm_idTousers   users?         @relation("portfolios_pm_idTousers", fields: [pm_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users_portfolios_user_idTousers users          @relation("portfolios_user_idTousers", fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  userId                          Int            @map("user_id")
+  pmId                            Int?           @map("pm_id")
+  portfolioManager                users?         @relation("portfolios_pm_idTousers", fields: [pmId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user                            users          @relation("portfolios_user_idTousers", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   transactions                    transactions[]
 }
 
 model transactions {
   id               Int        @id @default(autoincrement())
-  created_at       DateTime?  @default(now()) @db.Timestamptz(6)
-  updated_at       DateTime?  @default(now()) @db.Timestamptz(6)
-  stock_name       String     @db.VarChar(20)
-  stock_sector     String?    @db.VarChar(20)
-  transaction_time DateTime   @db.Timestamptz(6)
-  transaction_type String     @db.VarChar(40)
-  num_shares       Int
+  createdAt        DateTime?  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt        DateTime?  @default(now()) @db.Timestamptz(6) @map("updated_at")
+  stockName        String     @db.VarChar(20) @map("stock_name")
+  stockSector      String?    @db.VarChar(20) @map("stock_sector")
+  transactionTime  DateTime   @db.Timestamptz(6) @map("transaction_time")
+  transactionType  String     @db.VarChar(40) @map("transaction_type")
+  numShares        Int        @map("num_shares")
   price            Int
   currency         String     @db.VarChar(4)
   execution        String     @db.VarChar(20)
   commissions      Int?
   notes            String?
-  user_id          Int
-  portfolio_id     Int
-  portfolios       portfolios @relation(fields: [portfolio_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  users            users      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  portfolioId     Int          @map("portfolio_id")
+  portfolio        portfolios @relation(fields: [portfolioId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model users {
-  id                                   Int            @id @default(autoincrement())
-  created_at                           DateTime?      @default(now()) @db.Timestamptz(6)
-  updated_at                           DateTime?      @default(now()) @db.Timestamptz(6)
-  email                                String         @unique @db.VarChar(40)
+  id                                   Int          @id @default(autoincrement())
+  createdAt                            DateTime?    @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt                            DateTime?    @default(now()) @db.Timestamptz(6) @map("updated_at")
+  email                                String       @unique @db.VarChar(40)
   password                             String
-  first_name                           String?        @db.VarChar(40)
-  last_name                            String?        @db.VarChar(40)
-  role                                 String?        @db.VarChar(20)
-  portfolio_manager                    Int?
-  is_active                            Boolean?       @default(true)
-  users                                users?         @relation("usersTousers_portfolio_manager", fields: [portfolio_manager], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  portfolios_portfolios_pm_idTousers   portfolios[]   @relation("portfolios_pm_idTousers")
-  portfolios_portfolios_user_idTousers portfolios[]   @relation("portfolios_user_idTousers")
-  transactions                         transactions[]
-  other_users                          users[]        @relation("usersTousers_portfolio_manager")
+  firstName                            String?      @db.VarChar(40) @map("first_name")
+  lastName                             String?      @db.VarChar(40) @map("last_name")
+  role                                 String?      @db.VarChar(20)
+  portfolioManager                     Int?         @map("portfolio_manager")
+  isActive                             Boolean      @default(true) @map("is_active")
+  pmUser                     users?       @relation("usersTousers_portfolio_manager", fields: [portfolioManager], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  portfolios_portfolios_pm_idTousers   portfolios[] @relation("portfolios_pm_idTousers")
+  portfolios_portfolios_user_idTousers portfolios[] @relation("portfolios_user_idTousers")
+  other_users                          users[]      @relation("usersTousers_portfolio_manager")
 }
