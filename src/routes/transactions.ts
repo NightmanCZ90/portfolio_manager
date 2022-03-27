@@ -60,11 +60,36 @@ const transactionValidation = [
 
 const router = Router();
 
-router.post(
+router.get(
   '/portfolios/:pId/transactions',
+  isAuth,
+  transactionsController.getPortfolioTransactions
+);
+
+router.post(
+  '/transactions',
   isAuth,
   transactionValidation,
   transactionsController.createTransaction
+);
+
+router.get(
+  '/transactions/:id',
+  isAuth,
+  transactionsController.getTransaction
+);
+
+router.get(
+  '/transactions',
+  isAuth,
+  transactionsController.getTransactions
+);
+
+router.put(
+  '/transactions/:id',
+  isAuth,
+  transactionValidation,
+  transactionsController.updateTransaction
 );
 
 export default router;

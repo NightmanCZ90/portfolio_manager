@@ -29,7 +29,7 @@ export interface BaseTransaction {
   commissions: number;
   notes: string;
   userId?: number;
-  portfolioId?: number;
+  portfolioId: number;
 }
 export interface Transaction extends BaseTransaction {
   id?: number;
