@@ -10,5 +10,6 @@
 # misc
 .DS_Store
 config.ts
+.env
 
 package-lock.json
