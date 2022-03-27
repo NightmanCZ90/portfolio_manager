@@ -14,6 +14,7 @@ exports.up = pgm => {
       last_name VARCHAR(40),
       role VARCHAR(20),
       portfolio_manager INTEGER REFERENCES users(id)
+      is_active BOOL
     );
   `);
 };
