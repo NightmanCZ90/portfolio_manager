@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 
 import usersRoutes from './routes/users';
 import authRoutes from './routes/auth';
@@ -14,12 +15,11 @@ export interface StatusError extends Error {
 /** App initialization */
 const app = express();
 
-/** App use */
+/** App configuration */
+app.use(helmet());
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-/** CORS */
-app.use(cors());
 
 /** Routing */
 app.use(usersRoutes);

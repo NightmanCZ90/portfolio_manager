@@ -2,8 +2,9 @@ import app from './server';
 import pool from './database/pool';
 import config from './config';
 
-const port = Number(config.port || 8080);
+const port = config.port || 8080;
 
+/** Connecting to database */
 pool.connect({
   host: config.pgHost,
   port: config.pgPort,
@@ -12,6 +13,7 @@ pool.connect({
   password: config.pgPassword,
 })
   .then(() => {
+    /** Server activation */
     app.listen(port, () => {
       console.log('Listening on port: ' + port);
     });
