@@ -19,7 +19,7 @@ export const checkAndReturnPortfolio = async (req: AuthRequest, portfolioId: num
   }
 
   if (req.body.userId !== portfolio.userId) {
-    const error: StatusError = new Error('Not authorized to this access portfolio.');
+    const error: StatusError = new Error('Not authorized to access this portfolio.');
     error.statusCode = 403;
     throw error;
   }
@@ -36,6 +36,7 @@ const portfoliosController = {
   getUsersPortfolios: async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const portfolios = await PortfolioRepo.findAllByUserId(req.body.userId);
+
       res.status(200).json({ portfolios });
     } catch (err: any) {
       if (!err.statusCode) {
