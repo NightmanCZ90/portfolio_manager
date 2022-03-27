@@ -55,6 +55,15 @@ class TransactionRepo {
 
     return toCamelCase(rows!)[0];
   }
+
+  static async delete(id: string): Promise<Transaction> {
+    const { rows } = await pool.query(
+      'DELETE FROM transactions WHERE id = $1 RETURNING *;',
+      [id]
+    ) || {};
+
+    return toCamelCase(rows!)[0];
+  }
 }
 
 export default TransactionRepo;

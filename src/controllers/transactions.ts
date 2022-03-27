@@ -131,6 +131,23 @@ const checkAndReturnTransaction = async (req: AuthRequest, transactionId: number
       next(err);
     };
   },
+
+  deleteTransaction: async (req: AuthRequest, res: Response, next: NextFunction) => {
+    try {
+      const transactionId = parseInt(req.params.id);
+      await checkAndReturnTransaction(req, transactionId);
+
+      const transaction = await TransactionRepo.delete(req.params.id);
+
+      res.status(200).json({ transaction });
+    } catch (err: any) {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+        err.message = 'Updating portfolio failed.';
+      }
+      next(err);
+    };
+  },
 }
 
 export default transactionsController;

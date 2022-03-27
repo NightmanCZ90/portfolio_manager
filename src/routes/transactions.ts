@@ -92,4 +92,10 @@ router.put(
   transactionsController.updateTransaction
 );
 
+router.delete(
+  '/transactions/:id',
+  isAuth,
+  transactionsController.deleteTransaction
+);
+
 export default router;
