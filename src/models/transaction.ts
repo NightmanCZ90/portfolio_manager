@@ -28,7 +28,6 @@ export interface BaseTransaction {
   execution: ExecutionType;
   commissions: number;
   notes: string;
-  userId?: number;
   portfolioId: number;
 }
 export interface Transaction extends BaseTransaction {

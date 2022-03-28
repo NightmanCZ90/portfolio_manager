@@ -19,7 +19,9 @@ const checkAndReturnTransaction = async (req: AuthRequest, transactionId: number
     throw error;
   }
 
-  if (req.body.userId !== transaction.userId) {
+  const portfolio = await checkAndReturnPortfolio(req, transaction.portfolioId);
+
+  if (req.body.userId !== portfolio.userId) {
     const error: StatusError = new Error('Not authorized to access this transaction.');
     error.statusCode = 403;
     throw error;
@@ -114,12 +116,10 @@ const checkAndReturnTransaction = async (req: AuthRequest, transactionId: number
         throw error;
       }
 
-      const { portfolioId } = req.body;
-      await checkAndReturnPortfolio(req, portfolioId);
       const transactionId = parseInt(req.params.id);
-      await checkAndReturnTransaction(req, transactionId);
+      const transaction = await checkAndReturnTransaction(req, transactionId);
 
-      const updatedTransaction = await TransactionRepo.update({ ...req.body, id: transactionId });
+      const updatedTransaction = await TransactionRepo.update({ ...transaction, ...req.body, id: transactionId });
 
       res.status(200).json({ transaction: updatedTransaction });
     } catch (err: any) {
