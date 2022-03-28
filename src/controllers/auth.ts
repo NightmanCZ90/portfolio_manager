@@ -2,8 +2,8 @@ import { validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { NextFunction, Response } from 'express';
+import { User } from '@prisma/client';
 
-import { User } from '../models/user';
 import UserRepo from '../repos/user-repo';
 import { StatusError } from '../server';
 import { Auth } from '../models/auth';
