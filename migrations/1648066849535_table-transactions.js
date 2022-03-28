@@ -30,7 +30,6 @@ exports.up = pgm => {
       execution VARCHAR(20) NOT NULL,
       commissions INTEGER,
       notes TEXT,
-      user_id INTEGER NOT NULL REFERENCES users(id),
       portfolio_id INTEGER NOT NULL REFERENCES portfolios(id) ON DELETE CASCADE
     );
   `);
