@@ -1,7 +1,8 @@
+import { Transaction } from '@prisma/client';
 import { NextFunction, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { AuthRequest, AuthRequestBody } from '../models/routes';
-import { BaseTransaction, Transaction } from '../models/transaction';
+import { BaseTransaction } from '../models/transaction';
 import TransactionRepo from '../repos/transaction-repo';
 import { StatusError } from '../server';
 import { checkAndReturnPortfolio } from './portfolios';
@@ -133,12 +134,12 @@ const checkAndReturnTransaction = async (req: AuthRequest, transactionId: number
 
   deleteTransaction: async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
-      const transactionId = parseInt(req.params.id);
+      const transactionId = Number(req.params.id);
       await checkAndReturnTransaction(req, transactionId);
 
-      const transaction = await TransactionRepo.delete(req.params.id);
+      const deletedTransaction = await TransactionRepo.delete(transactionId);
 
-      res.status(200).json({ transaction });
+      res.status(200).json({ transaction: deletedTransaction });
     } catch (err: any) {
       if (!err.statusCode) {
         err.statusCode = 500;

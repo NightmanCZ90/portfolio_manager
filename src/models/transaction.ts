@@ -30,8 +30,3 @@ export interface BaseTransaction {
   notes: string;
   portfolioId: number;
 }
-export interface Transaction extends BaseTransaction {
-  id?: number;
-  createdAt?: string;
-  updatedAt?: string;
-}

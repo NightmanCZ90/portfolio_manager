@@ -1,68 +1,75 @@
+import { Transaction } from '@prisma/client';
 import pool from '../database/pool';
-import { BaseTransaction, Transaction } from '../models/transaction';
+import { BaseTransaction } from '../models/transaction';
+import { prisma } from '../server';
 import { toCamelCase } from '../utils/helpers';
 
 class TransactionRepo {
 
-  static async findById(id: number): Promise<Transaction> {
-    const { rows } = await pool.query(
-      'SELECT * FROM transactions WHERE id = $1;',
-      [id]
-    ) || {};
+  static async findById(id: number): Promise<Transaction | null> {
+    const transaction = await prisma.transaction.findUnique({ where: { id } });
 
-    return toCamelCase(rows!)[0];
+    return transaction;
   }
 
   static async findAllByUserId(id: number): Promise<Transaction[]> {
-    const { rows } = await pool.query(
-      'SELECT * FROM transactions WHERE user_id = $1 ORDER BY transaction_time;',
-      [id]
-    ) || {};
+    // const portfolioIds = await prisma.portfolio.findMany({ where: { userId: id }, select: { id: true } });
+    // const transactions = await prisma.transaction.findMany({ where: { portfolioId: []}})
+    // const portfolios = await prisma.portfolio.findMany({ where: { userId: id }, include: { transactions: true } });
 
-    return toCamelCase(rows!);
+    // const transactions = portfolios.map(portfolio => portfolio.transactions);
+
+    // return ...transactions;
+
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        portfolio: {
+          userId: id,
+        },
+      },
+    });
+
+    return transactions;
   }
 
   static async findAllByPortfolioId(id: number): Promise<Transaction[]> {
-    const { rows } = await pool.query(
-      'SELECT * FROM transactions WHERE portfolio_id = $1 ORDER BY transaction_time;',
-      [id]
-    ) || {};
+    const transactions = await prisma.transaction.findMany({ where: { portfolioId: id } });
 
-    return toCamelCase(rows!);
+    return transactions;
   }
 
   static async insert(transaction: BaseTransaction): Promise<Transaction> {
-    const { stockName, stockSector, transactionTime, transactionType, numShares, price, currency, execution, commissions, notes, portfolioId } = transaction;
+    const createdTransaction = await prisma.transaction.create({ data: transaction });
 
-    const { rows } = await pool.query(`
-      INSERT INTO transactions (stock_name, stock_sector, transaction_time, transaction_type, num_shares, price, currency, execution, commissions, notes, portfolio_id)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *;
-      `, [stockName, stockSector, transactionTime, transactionType, numShares, price, currency, execution, commissions, notes, portfolioId]
-    ) || {};
-
-    return toCamelCase(rows!)[0];
+    return createdTransaction;
   }
 
   static async update(transaction: Transaction): Promise<Transaction> {
     const { stockName, stockSector, transactionTime, transactionType, numShares, price, currency, execution, commissions, notes, portfolioId, id } = transaction;
+    const updatedTransaction = await prisma.transaction.update({
+      where: { id },
+      data: {
+        stockName,
+        stockSector,
+        transactionTime,
+        transactionType,
+        numShares,
+        price,
+        currency,
+        execution,
+        commissions,
+        notes,
+        portfolioId,
+      }
+    });
 
-    const { rows } = await pool.query(`
-      UPDATE transactions
-      SET stock_name = $1, stock_sector = $2, transaction_time = $3, transaction_type = $4, num_shares = $5, price = $6, currency = $7, execution = $8, commissions = $9, notes = $10, portfolio_id = $11, updated_at = NOW()
-      WHERE id = $12 RETURNING *;
-    `, [stockName, stockSector, transactionTime, transactionType, numShares, price, currency, execution, commissions, notes, portfolioId, id]
-    ) || {};
-
-    return toCamelCase(rows!)[0];
+    return updatedTransaction;
   }
 
-  static async delete(id: string): Promise<Transaction> {
-    const { rows } = await pool.query(
-      'DELETE FROM transactions WHERE id = $1 RETURNING *;',
-      [id]
-    ) || {};
+  static async delete(id: number): Promise<Transaction> {
+    const deletedTransaction = await prisma.transaction.delete({ where: { id }});
 
-    return toCamelCase(rows!)[0];
+    return deletedTransaction;
   }
 }
 
