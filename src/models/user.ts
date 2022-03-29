@@ -9,5 +9,5 @@ export interface BaseUser {
   password: string;
   firstName: string | null;
   lastName: string | null;
-  role: string | null;
+  role: Role | null;
 }
