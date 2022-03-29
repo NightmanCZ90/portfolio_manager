@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import { PrismaClient } from '@prisma/client'
 
 import usersRoutes from './routes/users';
 import authRoutes from './routes/auth';
@@ -11,6 +12,8 @@ export interface StatusError extends Error {
   statusCode?: number;
   data?: any;
 }
+
+export const prisma = new PrismaClient();
 
 /** App initialization */
 const app = express();

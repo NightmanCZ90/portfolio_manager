@@ -1,7 +1,8 @@
+import { Transaction } from '@prisma/client';
 import { NextFunction, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { AuthRequest, AuthRequestBody } from '../models/routes';
-import { BaseTransaction, Transaction } from '../models/transaction';
+import { BaseTransaction } from '../models/transaction';
 import TransactionRepo from '../repos/transaction-repo';
 import { StatusError } from '../server';
 import { checkAndReturnPortfolio } from './portfolios';
@@ -19,7 +20,9 @@ const checkAndReturnTransaction = async (req: AuthRequest, transactionId: number
     throw error;
   }
 
-  if (req.body.userId !== transaction.userId) {
+  const portfolio = await checkAndReturnPortfolio(req, transaction.portfolioId);
+
+  if (req.body.userId !== portfolio.userId) {
     const error: StatusError = new Error('Not authorized to access this transaction.');
     error.statusCode = 403;
     throw error;
@@ -44,7 +47,7 @@ const checkAndReturnTransaction = async (req: AuthRequest, transactionId: number
     } catch (err: any) {
       if (!err.statusCode) {
         err.statusCode = 500;
-        err.message = 'Retrieving portfolios failed.';
+        err.message = 'Retrieving transaction failed.';
       }
       next(err);
     }
@@ -97,7 +100,7 @@ const checkAndReturnTransaction = async (req: AuthRequest, transactionId: number
     } catch (err: any) {
       if (!err.statusCode) {
         err.statusCode = 500;
-        err.message = 'Creating portfolio failed.';
+        err.message = 'Creating transaction failed.';
       }
       next(err);
     };
@@ -114,18 +117,16 @@ const checkAndReturnTransaction = async (req: AuthRequest, transactionId: number
         throw error;
       }
 
-      const { portfolioId } = req.body;
-      await checkAndReturnPortfolio(req, portfolioId);
       const transactionId = parseInt(req.params.id);
-      await checkAndReturnTransaction(req, transactionId);
+      const transaction = await checkAndReturnTransaction(req, transactionId);
 
-      const updatedTransaction = await TransactionRepo.update({ ...req.body, id: transactionId });
+      const updatedTransaction = await TransactionRepo.update({ ...transaction, ...req.body, id: transactionId });
 
       res.status(200).json({ transaction: updatedTransaction });
     } catch (err: any) {
       if (!err.statusCode) {
         err.statusCode = 500;
-        err.message = 'Updating portfolio failed.';
+        err.message = 'Updating transaction failed.';
       }
       next(err);
     };
@@ -133,16 +134,16 @@ const checkAndReturnTransaction = async (req: AuthRequest, transactionId: number
 
   deleteTransaction: async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
-      const transactionId = parseInt(req.params.id);
+      const transactionId = Number(req.params.id);
       await checkAndReturnTransaction(req, transactionId);
 
-      const transaction = await TransactionRepo.delete(req.params.id);
+      const deletedTransaction = await TransactionRepo.delete(transactionId);
 
-      res.status(200).json({ transaction });
+      res.status(200).json({ transaction: deletedTransaction });
     } catch (err: any) {
       if (!err.statusCode) {
         err.statusCode = 500;
-        err.message = 'Updating portfolio failed.';
+        err.message = 'Deleting transaction failed.';
       }
       next(err);
     };

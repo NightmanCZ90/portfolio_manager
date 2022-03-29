@@ -1,64 +1,68 @@
-import pool from '../database/pool';
+import { User } from '@prisma/client';
 import { Auth } from '../models/auth';
-import { BaseUser, User } from '../models/user';
-import { toCamelCase } from '../utils/helpers';
+import { BaseUser } from '../models/user';
+import { prisma } from '../server';
 
 class UserRepo {
 
   static async find(): Promise<User[]> {
-    const { rows } = await pool.query('SELECT * FROM users;', []) || {};
+    const users = await prisma.user.findMany();
 
-    return toCamelCase(rows!);
+    return users;
   }
 
-  static async findById(id: number): Promise<User> {
-    const { rows } = await pool.query(
-      'SELECT * FROM users WHERE id = $1;',
-      [id]
-    ) || {};
+  static async findById(id: number): Promise<User | null> {
+    const user = await prisma.user.findUnique({ where: { id: Number(id) } });
 
-    return toCamelCase(rows!)[0];
+    return user;
   }
 
-  static async findByEmail(email: string): Promise<User> {
-    const { rows } = await pool.query(
-      'SELECT * FROM users WHERE email = $1;',
-      [email]
-    ) || {};
+  static async findByEmail(email: string): Promise<User | null> {
+    const user = await prisma.user.findUnique({ where: { email } });
 
-    return toCamelCase(rows!)[0];
+    return user;
   }
 
   static async register({ email, password }: Auth): Promise<User> {
-    const { rows } = await pool.query(
-      'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *;',
-      [email, password]
-    ) || {};
+    const user = await prisma.user.create({
+      data: {
+        email,
+        password,
+      }
+    });
 
-    return toCamelCase(rows!)[0];
+    return user;
   }
 
   // for testing purposes
   static async _insert(user: BaseUser): Promise<User> {
     const { email, password, firstName, lastName, role } = user;
-    const { rows } = await pool.query(
-      'INSERT INTO users (email, password, first_name, last_name, role) VALUES ($1, $2, $3, $4, $5) RETURNING *;',
-      [email, password, firstName, lastName, role]
-    ) || {};
+    const createdUser = await prisma.user.create({
+      data: {
+        email,
+        password,
+        firstName,
+        lastName,
+        role
+      }
+    });
 
-    return toCamelCase(rows!)[0];
+    return createdUser;
   }
 
   static async update(user: User): Promise<User> {
     const { id, firstName, lastName, role } = user;
-    const { rows } = await pool.query(`
-      UPDATE users
-      SET first_name = $1, last_name = $2, role = $3, updated_at = NOW()
-      WHERE id = $4 RETURNING *;
-    `, [firstName, lastName, role, id]
-    ) || {};
+    const updatedUser = await prisma.user.update({
+      where: { id: Number(id) },
+      data: {
+        updatedAt: new Date(),
+        firstName,
+        lastName,
+        role
+      },
+    });
 
-    return toCamelCase(rows!)[0];
+    return updatedUser;
   }
 }
 

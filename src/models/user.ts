@@ -7,14 +7,7 @@ export enum Role {
 export interface BaseUser {
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
-  role: string;
-  portfolioManager?: number;
-}
-
-export interface User extends BaseUser {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
+  firstName: string | null;
+  lastName: string | null;
+  role: Role | null;
 }
