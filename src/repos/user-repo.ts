@@ -18,7 +18,7 @@ class UserRepo {
   }
 
   static async findByEmail(email: string): Promise<User | null> {
-    const user = await prisma.user.findFirst({ where: { email } });
+    const user = await prisma.user.findUnique({ where: { email } });
 
     return user;
   }
