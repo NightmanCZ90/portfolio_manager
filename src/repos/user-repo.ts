@@ -36,7 +36,7 @@ class UserRepo {
 
   // for testing purposes
   static async _insert(user: BaseUser): Promise<User> {
-    const createdUser = prisma.user.create({
+    const createdUser = await prisma.user.create({
       data: user
     });
 
@@ -45,8 +45,7 @@ class UserRepo {
 
   static async update(user: User): Promise<User> {
     const { id, firstName, lastName, role } = user;
-
-    const updatedUser = prisma.user.update({
+    const updatedUser = await prisma.user.update({
       where: { id },
       data: {
         updatedAt: new Date(),
