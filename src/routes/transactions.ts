@@ -32,9 +32,9 @@ const transactionValidation = [
     .custom(isTransactionTypeValid)
     .withMessage('Invalid transaction type.'),
   body('numShares')
-    .isNumeric({ no_symbols: true }),
+    .isInt(),
   body('price')
-    .isNumeric({ no_symbols: true }),
+    .isInt(),
   body('currency')
     .notEmpty()
     .withMessage('Stock currency must not be empty.')
@@ -47,10 +47,13 @@ const transactionValidation = [
     .withMessage('Invalid execution type.'),
   body('commissions')
     .optional()
-    .isNumeric({ no_symbols: true }),
+    .isInt(),
   body('notes')
     .optional()
     .isString(),
+  body('portfolioId')
+    .notEmpty()
+    .isInt()
 ];
 
 /**

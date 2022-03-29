@@ -47,7 +47,7 @@ const checkAndReturnTransaction = async (req: AuthRequest, transactionId: number
     } catch (err: any) {
       if (!err.statusCode) {
         err.statusCode = 500;
-        err.message = 'Retrieving portfolios failed.';
+        err.message = 'Retrieving transaction failed.';
       }
       next(err);
     }
@@ -100,7 +100,7 @@ const checkAndReturnTransaction = async (req: AuthRequest, transactionId: number
     } catch (err: any) {
       if (!err.statusCode) {
         err.statusCode = 500;
-        err.message = 'Creating portfolio failed.';
+        err.message = 'Creating transaction failed.';
       }
       next(err);
     };
@@ -126,7 +126,7 @@ const checkAndReturnTransaction = async (req: AuthRequest, transactionId: number
     } catch (err: any) {
       if (!err.statusCode) {
         err.statusCode = 500;
-        err.message = 'Updating portfolio failed.';
+        err.message = 'Updating transaction failed.';
       }
       next(err);
     };
@@ -143,7 +143,7 @@ const checkAndReturnTransaction = async (req: AuthRequest, transactionId: number
     } catch (err: any) {
       if (!err.statusCode) {
         err.statusCode = 500;
-        err.message = 'Updating portfolio failed.';
+        err.message = 'Deleting transaction failed.';
       }
       next(err);
     };
