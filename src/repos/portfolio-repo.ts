@@ -1,66 +1,55 @@
+import { Portfolio } from '@prisma/client';
 import pool from '../database/pool';
-import { BasePortfolio, Portfolio } from '../models/portfolio';
+import { BasePortfolio } from '../models/portfolio';
+import { prisma } from '../server';
 import { toCamelCase } from '../utils/helpers';
 
 class PortfolioRepo {
 
-  static async findById(id: number): Promise<Portfolio> {
-    const { rows } = await pool.query(
-      'SELECT * FROM portfolios WHERE id = $1;',
-      [id]
-    ) || {};
+  static async findById(id: number): Promise<Portfolio | null> {
+    const portfolio = prisma.portfolio.findUnique({ where: { id } });
 
-    return toCamelCase(rows!)[0];
+    return portfolio;
   }
 
   static async findAllByUserId(id: number): Promise<Portfolio[]> {
-    const { rows } = await pool.query(
-      'SELECT * FROM portfolios WHERE user_id = $1 ORDER BY id;',
-      [id]
-    ) || {};
+    const portfolios = prisma.portfolio.findMany({ where: { userId: id } });
 
-    return toCamelCase(rows!);
+    return portfolios;
   }
 
   static async findAllByPmId(id: number): Promise<Portfolio[]> {
-    const { rows } = await pool.query(
-      'SELECT * FROM portfolios WHERE pm_id = $1 ORDER BY id;',
-      [id]
-    ) || {};
+    const portfolios = prisma.portfolio.findMany({ where: { pmId: id } });
 
-    return toCamelCase(rows!);
+    return portfolios;
   }
 
   static async insert(portfolio: BasePortfolio): Promise<Portfolio> {
-    const { name, description, color, url, userId, pmId } = portfolio;
-    const { rows } = await pool.query(`
-      INSERT INTO portfolios (name, description, color, url, user_id, pm_id)
-      VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;
-      `, [name, description, color, url, userId, pmId]
-    ) || {};
+    const createdPortfolio = prisma.portfolio.create({ data: portfolio });
 
-    return toCamelCase(rows!)[0];
+    return createdPortfolio;
   }
 
   static async update(portfolio: Portfolio): Promise<Portfolio> {
     const { name, description, color, url, id } = portfolio;
-    const { rows } = await pool.query(`
-      UPDATE portfolios
-      SET name = $1, description = $2, color = $3, url = $4, updated_at = NOW()
-      WHERE id = $5 RETURNING *;
-    `, [name, description, color, url, id]
-    ) || {};
+    const updatedPortfolio = prisma.portfolio.update({
+      where: { id },
+      data: {
+        updatedAt: new Date(),
+        name,
+        description,
+        color,
+        url
+      }
+    });
 
-    return toCamelCase(rows!)[0];
+    return updatedPortfolio;
   }
 
-  static async delete(id: string): Promise<Portfolio> {
-    const { rows } = await pool.query(
-      'DELETE FROM portfolios WHERE id = $1 RETURNING *;',
-      [id]
-    ) || {};
+  static async delete(id: number): Promise<Portfolio> {
+    const portfolio = prisma.portfolio.delete({ where: { id } });
 
-    return toCamelCase(rows!)[0];
+    return portfolio;
   }
 }
 

@@ -115,8 +115,8 @@ const portfoliosController = {
 
   deletePortfolio: async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
-      await checkAndReturnPortfolio(req, parseInt(req.params.id));
-      await PortfolioRepo.delete(req.params.id);
+      await checkAndReturnPortfolio(req, Number(req.params.id));
+      await PortfolioRepo.delete(Number(req.params.id));
 
       res.status(200).json({ message: 'Success.' });
     } catch (err: any) {
