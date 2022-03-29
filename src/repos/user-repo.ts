@@ -12,7 +12,7 @@ class UserRepo {
   }
 
   static async findById(id: number): Promise<User | null> {
-    const user = await prisma.user.findUnique({ where: { id } });
+    const user = await prisma.user.findUnique({ where: { id: Number(id) } });
 
     return user;
   }
@@ -36,8 +36,15 @@ class UserRepo {
 
   // for testing purposes
   static async _insert(user: BaseUser): Promise<User> {
+    const { email, password, firstName, lastName, role } = user;
     const createdUser = await prisma.user.create({
-      data: user
+      data: {
+        email,
+        password,
+        firstName,
+        lastName,
+        role
+      }
     });
 
     return createdUser;
@@ -46,7 +53,7 @@ class UserRepo {
   static async update(user: User): Promise<User> {
     const { id, firstName, lastName, role } = user;
     const updatedUser = await prisma.user.update({
-      where: { id },
+      where: { id: Number(id) },
       data: {
         updatedAt: new Date(),
         firstName,

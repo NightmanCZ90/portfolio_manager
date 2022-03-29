@@ -1,45 +1,60 @@
 import { Transaction } from '@prisma/client';
-import pool from '../database/pool';
 import { BaseTransaction } from '../models/transaction';
 import { prisma } from '../server';
-import { toCamelCase } from '../utils/helpers';
 
 class TransactionRepo {
 
   static async findById(id: number): Promise<Transaction | null> {
-    const transaction = await prisma.transaction.findUnique({ where: { id } });
+    const transaction = await prisma.transaction.findUnique({ where: { id: Number(id) } });
 
     return transaction;
   }
 
   static async findAllByUserId(id: number): Promise<Transaction[]> {
-    // const portfolioIds = await prisma.portfolio.findMany({ where: { userId: id }, select: { id: true } });
-    // const transactions = await prisma.transaction.findMany({ where: { portfolioId: []}})
-    // const portfolios = await prisma.portfolio.findMany({ where: { userId: id }, include: { transactions: true } });
-
-    // const transactions = portfolios.map(portfolio => portfolio.transactions);
-
-    // return ...transactions;
-
     const transactions = await prisma.transaction.findMany({
       where: {
         portfolio: {
-          userId: id,
+          userId: Number(id),
         },
       },
+      orderBy: {
+        transactionTime: 'asc'
+      }
     });
 
     return transactions;
   }
 
   static async findAllByPortfolioId(id: number): Promise<Transaction[]> {
-    const transactions = await prisma.transaction.findMany({ where: { portfolioId: id } });
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        portfolioId: Number(id)
+      },
+      orderBy: {
+        transactionTime: 'asc'
+      }
+    });
 
     return transactions;
   }
 
   static async insert(transaction: BaseTransaction): Promise<Transaction> {
-    const createdTransaction = await prisma.transaction.create({ data: transaction });
+    const { stockName, stockSector, transactionTime, transactionType, numShares, price, currency, execution, commissions, notes, portfolioId } = transaction;
+    const createdTransaction = await prisma.transaction.create({
+      data: {
+        stockName,
+        stockSector,
+        transactionTime,
+        transactionType,
+        numShares: Number(numShares),
+        price: Number(price),
+        currency,
+        execution,
+        commissions: Number(commissions),
+        notes,
+        portfolioId: Number(portfolioId)
+      }
+    });
 
     return createdTransaction;
   }
@@ -47,19 +62,20 @@ class TransactionRepo {
   static async update(transaction: Transaction): Promise<Transaction> {
     const { stockName, stockSector, transactionTime, transactionType, numShares, price, currency, execution, commissions, notes, portfolioId, id } = transaction;
     const updatedTransaction = await prisma.transaction.update({
-      where: { id },
+      where: { id: Number(id) },
       data: {
+        updatedAt: new Date(),
         stockName,
         stockSector,
         transactionTime,
         transactionType,
-        numShares,
-        price,
+        numShares: Number(numShares),
+        price: Number(price),
         currency,
         execution,
-        commissions,
+        commissions: Number(commissions),
         notes,
-        portfolioId,
+        portfolioId: Number(portfolioId),
       }
     });
 
@@ -67,7 +83,7 @@ class TransactionRepo {
   }
 
   static async delete(id: number): Promise<Transaction> {
-    const deletedTransaction = await prisma.transaction.delete({ where: { id }});
+    const deletedTransaction = await prisma.transaction.delete({ where: { id: Number(id) }});
 
     return deletedTransaction;
   }
