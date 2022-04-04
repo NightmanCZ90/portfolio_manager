@@ -51,7 +51,7 @@ const portfoliosController = {
     try {
       const portfolio = await checkAndReturnPortfolio(req, parseInt(req.params.id));
 
-      res.status(200).json({ portfolio });
+      res.status(200).json({ ...portfolio });
     } catch (err: any) {
       if (!err.statusCode) {
         err.statusCode = 500;
@@ -77,7 +77,7 @@ const portfoliosController = {
       // TODO: implement Portfolio Manager - pmId
       const portfolio = await PortfolioRepo.insert({ name, description, color, url, userId, pmId: null });
 
-      res.status(200).json({ portfolio });
+      res.status(200).json({ ...portfolio });
     } catch (err: any) {
       if (!err.statusCode) {
         err.statusCode = 500;
@@ -103,7 +103,7 @@ const portfoliosController = {
 
       const updatedPortfolio = await PortfolioRepo.update({ ...portfolio, name, description, color, url });
 
-      res.status(200).json({ portfolio: updatedPortfolio });
+      res.status(200).json({ ...updatedPortfolio });
     } catch (err: any) {
       if (!err.statusCode) {
         err.statusCode = 500;

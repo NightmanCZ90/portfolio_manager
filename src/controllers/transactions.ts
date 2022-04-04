@@ -57,7 +57,7 @@ const checkAndReturnTransaction = async (req: AuthRequest, transactionId: number
     try {
       const transaction = await checkAndReturnTransaction(req, Number(req.params.id));
 
-      res.status(200).json({ transaction });
+      res.status(200).json({ ...transaction });
     } catch (err: any) {
       if (!err.statusCode) {
         err.statusCode = 500;
@@ -96,7 +96,7 @@ const checkAndReturnTransaction = async (req: AuthRequest, transactionId: number
 
       const transaction = await TransactionRepo.insert(req.body);
 
-      res.status(200).json({ transaction });
+      res.status(200).json({ ...transaction });
     } catch (err: any) {
       if (!err.statusCode) {
         err.statusCode = 500;
@@ -122,7 +122,7 @@ const checkAndReturnTransaction = async (req: AuthRequest, transactionId: number
 
       const updatedTransaction = await TransactionRepo.update({ ...transaction, ...req.body, id: transactionId });
 
-      res.status(200).json({ transaction: updatedTransaction });
+      res.status(200).json({ ...updatedTransaction });
     } catch (err: any) {
       if (!err.statusCode) {
         err.statusCode = 500;
@@ -139,7 +139,7 @@ const checkAndReturnTransaction = async (req: AuthRequest, transactionId: number
 
       const deletedTransaction = await TransactionRepo.delete(transactionId);
 
-      res.status(200).json({ transaction: deletedTransaction });
+      res.status(200).json({ ...deletedTransaction });
     } catch (err: any) {
       if (!err.statusCode) {
         err.statusCode = 500;

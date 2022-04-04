@@ -52,7 +52,7 @@ const usersController = {
     try {
       const user = await UserRepo.findById(req.body.userId);
 
-      res.status(200).json({ user });
+      res.status(200).json({ ...user });
     } catch (err: any) {
       if (!err.statusCode) {
         err.statusCode = 500;
@@ -66,7 +66,7 @@ const usersController = {
     try {
       const user = await isCurrentUser(req);
 
-      res.status(200).json({ user });
+      res.status(200).json({ ...user });
     } catch (err: any) {
       if (!err.statusCode) {
         err.statusCode = 500;
@@ -91,7 +91,7 @@ const usersController = {
       const { firstName, lastName, role } = req.body;
       const updatedUser = await UserRepo.update({ ...user, firstName, lastName, role });
 
-      res.status(200).json({ user: updatedUser });
+      res.status(200).json({ ...updatedUser });
     } catch (err: any) {
       if (!err.statusCode) {
         err.statusCode = 500;
