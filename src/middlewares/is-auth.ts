@@ -13,7 +13,7 @@ const isAuth = (req: Request, res: Response, next: NextFunction) => {
   const token = authHeader.split(' ')[1];
   let decodedToken;
   try {
-    decodedToken = jwt.verify(token, config.tokenSecret) as jwt.JwtPayload;
+    decodedToken = jwt.verify(token, config.accessTokenSecret) as jwt.JwtPayload;
   } catch (err: any) {
     err.statusCode = 401;
     throw err;
