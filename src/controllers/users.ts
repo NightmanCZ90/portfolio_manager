@@ -48,6 +48,20 @@ const usersController = {
     }
   },
 
+  getCurrentUser: async (req: AuthRequest, res: Response, next: NextFunction) => {
+    try {
+      const user = await UserRepo.findById(req.body.userId);
+
+      res.status(200).json({ user });
+    } catch (err: any) {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+        err.message = 'Retrieving user failed.';
+      }
+      next(err);
+    };
+  },
+
   getUser: async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const user = await isCurrentUser(req);
