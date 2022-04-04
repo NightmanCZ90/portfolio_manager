@@ -48,4 +48,13 @@ router.post('/login', [
     .trim(),
 ], authController.login);
 
+router.post('/refresh', [
+  body('email')
+    .isEmail()
+    .withMessage('Please enter a valid email')
+    .normalizeEmail(),
+  body('refreshToken')
+    .trim(),
+], authController.refresh);
+
 export default router;

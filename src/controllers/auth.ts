@@ -1,27 +1,16 @@
 import { validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import { NextFunction, Response } from 'express';
-import { User } from '@prisma/client';
 
 import UserRepo from '../repos/user-repo';
 import { StatusError } from '../server';
-import { Auth } from '../models/auth';
+import { Auth, Refresh } from '../models/auth';
 import config from '../config';
 import { RequestBody } from '../models/routes';
-
-const tokenForUser = (user: User) => {
-  return jwt.sign(
-    {
-      email: user.email,
-      sub: user.id,
-    },
-    config.tokenSecret,
-    { expiresIn: config.jwtExpirySeconds }
-    );
-}
+import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../utils/helpers';
 
 const authController = {
+
   signup: async (req: RequestBody<Auth>, res: Response, next: NextFunction) => {
     try {
       const errors = validationResult(req);
@@ -40,9 +29,10 @@ const authController = {
         password: hashedPw,
       });
 
-      const token = tokenForUser(user);
+      const accessToken = generateAccessToken(user.email, user.id);
+      const refreshToken = generateRefreshToken(user.email, user.id);
 
-      res.status(201).json({ message: 'User has been created', token, userId: user.id });
+      res.status(201).json({ message: 'User has been created', accessToken, refreshToken, expiresIn: config.jwtExpirySeconds, userId: user.id });
 
     } catch (err: any) {
       if (!err.statusCode) {
@@ -51,6 +41,7 @@ const authController = {
       next(err);
     };
   },
+
   login: async (req: RequestBody<Auth>, res: Response, next: NextFunction) => {
     try {
       const { email, password } = req.body;
@@ -67,8 +58,11 @@ const authController = {
         error.statusCode = 401;
         throw error;
       }
-      const token = tokenForUser(user);
-      res.status(200).json({ token, userId: user.id });
+      const accessToken = generateAccessToken(user.email, user.id);
+      const refreshToken = generateRefreshToken(user.email, user.id);
+
+      //pridat refreshToken
+      res.status(200).json({ accessToken, refreshToken, expiresIn: config.jwtExpirySeconds, userId: user.id });
       return;
     } catch (err: any) {
       if (!err.statusCode) {
@@ -78,6 +72,18 @@ const authController = {
       return err;
     };
   },
+
+  refresh: async (req: RequestBody<Refresh>, res: Response, next: NextFunction) => {
+    const { email, refreshToken } = req.body;
+
+    const { isValid, userId } = verifyRefreshToken(email, refreshToken);
+
+    if (!isValid) {
+      return res.status(401).json({ success: false, error: "Invalid token, try login again." });
+    }
+    const accessToken = generateAccessToken(email, Number(userId));
+    return res.status(200).json({ success: true, accessToken });
+  }
 }
 
 export default authController;

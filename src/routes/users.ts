@@ -41,6 +41,12 @@ router.get(
 );
 
 router.get(
+  '/users/current',
+  isAuth,
+  usersController.getCurrentUser
+);
+
+router.get(
   '/users/:id',
   isAuth,
   usersController.getUser

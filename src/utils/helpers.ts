@@ -1,3 +1,7 @@
+import { User } from '@prisma/client';
+import jwt from 'jsonwebtoken';
+
+import config from '../config';
 import { ExecutionType, TransactionType } from '../models/transaction';
 import { Role } from '../models/user'
 
@@ -32,3 +36,34 @@ export const toCamelCase = (rows: any[]) => rows.map(row => {
   }
   return replaced;
 });
+
+export const generateAccessToken = (email: string, userId: number) => {
+  return jwt.sign(
+    {
+      email,
+      sub: userId,
+    },
+    config.accessTokenSecret,
+    { expiresIn: config.jwtExpirySeconds }
+  );
+}
+
+export const generateRefreshToken = (email: string, userId: number) => {
+  return jwt.sign(
+    {
+      email,
+      sub: userId,
+    },
+    config.refreshTokenSecret,
+    { expiresIn: config.jwtRefreshExpirySeconds }
+  );
+}
+
+export const verifyRefreshToken = (email: string, refreshToken: string) => {
+  try {
+    const decodedToken = jwt.verify(refreshToken, config.refreshTokenSecret) as jwt.JwtPayload;
+    return { userId: decodedToken.sub, isValid: decodedToken.email === email };
+  } catch (err: any) {
+    return { isValid: false };
+  }
+};

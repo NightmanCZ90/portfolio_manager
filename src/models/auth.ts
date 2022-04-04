@@ -3,3 +3,8 @@ export interface Auth {
   password: string;
   confirmPassword?: string;
 }
+
+export interface Refresh {
+  email: string;
+  refreshToken: string;
+}
