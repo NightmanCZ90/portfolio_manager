@@ -30,6 +30,9 @@ class PortfolioRepo {
       },
       orderBy: {
         id: 'asc'
+      },
+      include: {
+        user: true
       }
     });
 
@@ -45,7 +48,7 @@ class PortfolioRepo {
         color,
         url,
         userId: Number(userId),
-        pmId: Number(pmId)
+        pmId: Number(pmId) || null,
       }
     });
 
