@@ -35,9 +35,10 @@ const portfoliosController = {
 
   getUsersPortfolios: async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
-      const portfolios = await PortfolioRepo.findAllByUserId(req.body.userId);
+      const personal = await PortfolioRepo.findAllByUserId(req.body.userId);
+      const managed = await PortfolioRepo.findAllByPmId(req.body.userId);
 
-      res.status(200).json({ portfolios });
+      res.status(200).json({ personal, managed });
     } catch (err: any) {
       if (!err.statusCode) {
         err.statusCode = 500;
