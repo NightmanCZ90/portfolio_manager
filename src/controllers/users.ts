@@ -115,7 +115,7 @@ const usersController = {
       const user = await UserRepo.findByEmail(req.body.email);
 
       if (!user) {
-        const error: StatusError = new Error('User with this id does not exist.');
+        const error: StatusError = new Error('User with this email does not exist.');
         error.statusCode = 404;
         throw error;
       }
