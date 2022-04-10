@@ -24,7 +24,6 @@ const isAuth = (req: Request, res: Response, next: NextFunction) => {
     throw error;
   }
 
-  req.body.email = decodedToken.email;
   req.body.userId = decodedToken.sub;
   next();
 };
