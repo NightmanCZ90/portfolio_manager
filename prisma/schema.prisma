@@ -23,6 +23,7 @@ model Portfolio {
   url              String?
   userId           Int           @map("user_id")
   pmId             Int?          @map("pm_id")
+  confirmed        Boolean       @default(false) @map("confirmed")
   portfolioManager User?         @relation("portfolios_pm_idTousers", fields: [pmId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   user             User          @relation("portfolios_user_idTousers", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   transactions     Transaction[]

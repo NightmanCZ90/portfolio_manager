@@ -114,6 +114,22 @@ const portfoliosController = {
     };
   },
 
+  confirmPortfolio: async (req: AuthRequestBody<BasePortfolio>, res: Response, next: NextFunction) => {
+    try {
+      const portfolio = await checkAndReturnPortfolio(req, parseInt(req.params.id));
+
+      const confirmedPortfolio = await PortfolioRepo.confirmPortfolio(portfolio.id);
+
+      res.status(200).json({ ...confirmedPortfolio });
+    } catch (err: any) {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+        err.message = 'Confirming portfolio failed.';
+      }
+      next(err);
+    };
+  },
+
   deletePortfolio: async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const portfolioId = Number(req.params.id);

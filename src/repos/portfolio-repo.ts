@@ -71,6 +71,18 @@ class PortfolioRepo {
     return updatedPortfolio;
   }
 
+  static async confirmPortfolio(portfolioId: number): Promise<Portfolio> {
+    const confirmedPortfolio = await prisma.portfolio.update({
+      where: { id: Number(portfolioId) },
+      data: {
+        updatedAt: new Date(),
+        confirmed: true,
+      }
+    });
+
+    return confirmedPortfolio;
+  }
+
   static async delete(id: number): Promise<Portfolio> {
     const deletedPortfolio = await prisma.portfolio.delete({ where: { id: Number(id) } });
 
