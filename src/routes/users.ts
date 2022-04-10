@@ -59,4 +59,16 @@ router.put(
   usersController.updateUser
 );
 
+router.post(
+  '/users/confirm',
+  isAuth,
+  [
+    body('email')
+      .isEmail()
+      .withMessage('Please enter a valid email')
+      .normalizeEmail()
+  ],
+  usersController.getUserToConfirm
+);
+
 export default router;

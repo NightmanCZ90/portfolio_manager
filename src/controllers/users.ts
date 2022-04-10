@@ -99,7 +99,36 @@ const usersController = {
       }
       next(err);
     };
-  }
+  },
+
+  getUserToConfirm: async (req: AuthRequest, res: Response, next: NextFunction) => {
+    try {
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        const error: StatusError = new Error('Validation failed.');
+        error.statusCode = 422;
+        error.data = errors.array();
+        throw error;
+      }
+
+      const user = await UserRepo.findByEmail(req.body.email);
+
+      if (!user) {
+        const error: StatusError = new Error('User with this id does not exist.');
+        error.statusCode = 404;
+        throw error;
+      }
+
+      res.status(200).json({ id: user.id });
+    } catch (err: any) {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+        err.message = 'Retrieving user failed.';
+      }
+      next(err);
+    };
+  },
   // TODO: get users you manage
 }
 
