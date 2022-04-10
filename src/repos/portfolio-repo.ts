@@ -49,6 +49,7 @@ class PortfolioRepo {
         url,
         userId: Number(userId),
         pmId: Number(pmId) || null,
+        confirmed: !Boolean(pmId),
       }
     });
 
