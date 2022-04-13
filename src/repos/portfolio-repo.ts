@@ -1,4 +1,4 @@
-import { Portfolio } from '@prisma/client';
+import { Portfolio, User } from '@prisma/client';
 import { BasePortfolio } from '../models/portfolio';
 import { prisma } from '../server';
 
@@ -10,20 +10,23 @@ class PortfolioRepo {
     return portfolio;
   }
 
-  static async findAllByUserId(id: number): Promise<Portfolio[]> {
+  static async findAllByUserId(id: number): Promise<(Portfolio & { portfolioManager: User | null })[]> {
     const portfolios = await prisma.portfolio.findMany({
       where: {
         userId: Number(id)
       },
       orderBy: {
         id: 'asc'
-      }
+      },
+      include: {
+        portfolioManager: true,
+      },
     });
 
     return portfolios;
   }
 
-  static async findAllByPmId(id: number): Promise<Portfolio[]> {
+  static async findAllByPmId(id: number): Promise<(Portfolio & { user: User })[]> {
     const portfolios = await prisma.portfolio.findMany({
       where: {
         pmId: Number(id)
