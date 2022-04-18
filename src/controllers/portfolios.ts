@@ -18,7 +18,7 @@ export const checkAndReturnPortfolio = async (req: AuthRequest, portfolioId: num
     throw error;
   }
 
-  if (req.body.userId !== portfolio.userId) {
+  if (req.body.userId !== portfolio.userId && req.body.userId !== portfolio.pmId) {
     const error: StatusError = new Error('Not authorized to access this portfolio.');
     error.statusCode = 403;
     throw error;
