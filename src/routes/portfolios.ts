@@ -46,7 +46,7 @@ router.get(
 );
 
 router.post(
-  '/portfolios',
+  '/portfolios/create',
   isAuth,
   portfolioValidation,
   portfoliosController.createPortfolio

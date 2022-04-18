@@ -42,17 +42,17 @@ class PortfolioRepo {
     return portfolios;
   }
 
-  static async insert(portfolio: BasePortfolio): Promise<Portfolio> {
-    const { name, description, color, url, userId, pmId } = portfolio;
+  static async insert(portfolio: BasePortfolio, userId: number): Promise<Portfolio> {
+    const { name, description, color, url, investorId } = portfolio;
     const createdPortfolio = await prisma.portfolio.create({
       data: {
         name,
         description,
         color,
         url,
-        userId: Number(userId),
-        pmId: Number(pmId) || null,
-        confirmed: !Boolean(pmId),
+        userId: investorId || Number(userId),
+        pmId: investorId ? userId : null,
+        confirmed: !Boolean(investorId),
       }
     });
 

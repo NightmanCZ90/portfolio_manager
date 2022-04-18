@@ -3,6 +3,5 @@ export interface BasePortfolio {
   description: string | null;
   color: string | null;
   url: string | null;
-  userId: number;
-  pmId: number | null;
+  investorId: number | null;
 }

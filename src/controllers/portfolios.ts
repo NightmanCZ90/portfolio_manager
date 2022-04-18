@@ -76,10 +76,9 @@ const portfoliosController = {
         throw error;
       }
 
-      const { name, description, color, url, userId } = req.body;
+      const { name, description, color, url, userId, investorId } = req.body;
 
-      // TODO: implement Portfolio Manager - pmId
-      const portfolio = await PortfolioRepo.insert({ name, description, color, url, userId, pmId: null });
+      const portfolio = await PortfolioRepo.insert({ name, description, color, url, investorId }, userId);
 
       res.status(200).json({ ...portfolio });
     } catch (err: any) {
