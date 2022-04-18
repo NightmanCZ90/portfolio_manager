@@ -101,7 +101,7 @@ const usersController = {
     };
   },
 
-  getUserToConfirm: async (req: AuthRequest, res: Response, next: NextFunction) => {
+  getUserToConfirm: async (req: AuthRequestBody<{ email: string }>, res: Response, next: NextFunction) => {
     try {
       const errors = validationResult(req);
 

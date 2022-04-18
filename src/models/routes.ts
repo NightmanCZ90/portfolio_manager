@@ -16,7 +16,6 @@ export interface RequestBodyAndParams<T, K> extends Request {
 /** Authenticated request */
 type Auth = {
   userId: number;
-  email: string;
 }
 export interface AuthRequest extends Request {
   body: Auth;
