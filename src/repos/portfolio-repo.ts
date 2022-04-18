@@ -69,6 +69,10 @@ class PortfolioRepo {
         description,
         color,
         url
+      },
+      include: {
+        user: true,
+        portfolioManager: true,
       }
     });
 
@@ -85,6 +89,27 @@ class PortfolioRepo {
     });
 
     return confirmedPortfolio;
+  }
+
+  static async unlinkPortfolio(portfolio: Portfolio, userId: number): Promise<Portfolio & { user: User } | null> {
+    const newUserId = portfolio.userId !== userId ? portfolio.userId : portfolio.pmId;
+
+    if (!newUserId) return null;
+
+    const unlinkedPortfolio = await prisma.portfolio.update({
+      where: { id: Number(portfolio.id) },
+      data: {
+        updatedAt: new Date(),
+        confirmed: true,
+        userId: newUserId,
+        pmId: null,
+      },
+      include: {
+        user: true,
+      }
+    });
+
+    return unlinkedPortfolio;
   }
 
   static async delete(id: number): Promise<Portfolio> {

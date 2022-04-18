@@ -102,10 +102,10 @@ const portfoliosController = {
       }
 
       const portfolio = await checkAndReturnPortfolio(req, parseInt(req.params.id));
-      const { name, description, color, url } = req.body;
+      const { name, description, color, url, userId } = req.body;
 
       /** Check whether portfolio is managed. Only PM can update managed portfolio */
-      if (portfolio.pmId && portfolio.pmId !== req.body.userId) {
+      if (portfolio.pmId && portfolio.pmId !== userId) {
         const error: StatusError = new Error('Only portfolio managers can update this portfolio.');
         error.statusCode = 403;
         throw error;
@@ -134,6 +134,38 @@ const portfoliosController = {
       if (!err.statusCode) {
         err.statusCode = 500;
         err.message = 'Confirming portfolio failed.';
+      }
+      next(err);
+    };
+  },
+
+  unlinkPortfolio: async (req: AuthRequest, res: Response, next: NextFunction) => {
+    try {
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        const error: StatusError = new Error('Validation failed.');
+        error.statusCode = 422;
+        error.data = errors.array();
+        throw error;
+      }
+
+      const portfolio = await checkAndReturnPortfolio(req, parseInt(req.params.id));
+      const { userId } = req.body;
+
+      const updatedPortfolio = await PortfolioRepo.unlinkPortfolio(portfolio, userId);
+
+      if (!updatedPortfolio) {
+        const error: StatusError = new Error('Unlinking portfolio failed.');
+        error.statusCode = 500;
+        throw error;
+      }
+
+      res.status(200).json({ ...updatedPortfolio });
+    } catch (err: any) {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+        err.message = 'Unlinking portfolio failed.';
       }
       next(err);
     };

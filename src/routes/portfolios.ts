@@ -71,6 +71,12 @@ router.put(
   portfoliosController.confirmPortfolio
 );
 
+router.put(
+  '/portfolios/:id/unlink',
+  isAuth,
+  portfoliosController.unlinkPortfolio
+);
+
 router.delete(
   '/portfolios/:id',
   isAuth,
