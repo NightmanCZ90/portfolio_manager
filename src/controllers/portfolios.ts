@@ -3,6 +3,7 @@ import { validationResult } from 'express-validator';
 import { BasePortfolio } from '../models/portfolio';
 import { AuthRequest, AuthRequestBody } from '../models/routes';
 import PortfolioRepo from '../repos/portfolio-repo';
+import UserRepo from '../repos/user-repo';
 import { StatusError } from '../server';
 
 /**
@@ -139,7 +140,7 @@ const portfoliosController = {
     };
   },
 
-  unlinkPortfolio: async (req: AuthRequest, res: Response, next: NextFunction) => {
+  linkPortfolio: async (req: AuthRequestBody<{ email: string }>, res: Response, next: NextFunction) => {
     try {
       const errors = validationResult(req);
 
@@ -150,18 +151,43 @@ const portfoliosController = {
         throw error;
       }
 
+      const user = await UserRepo.findByEmail(req.body.email);
+
+      if (!user) {
+        const error: StatusError = new Error('User with this email does not exist.');
+        error.statusCode = 404;
+        throw error;
+      }
+
       const portfolio = await checkAndReturnPortfolio(req, parseInt(req.params.id));
       const { userId } = req.body;
 
-      const updatedPortfolio = await PortfolioRepo.unlinkPortfolio(portfolio, userId);
+      const linkedPortfolio = await PortfolioRepo.linkPortfolio(portfolio, userId, user.id);
 
-      if (!updatedPortfolio) {
+      res.status(200).json({ ...linkedPortfolio });
+    } catch (err: any) {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+        err.message = 'Unlinking portfolio failed.';
+      }
+      next(err);
+    };
+  },
+
+  unlinkPortfolio: async (req: AuthRequest, res: Response, next: NextFunction) => {
+    try {
+      const portfolio = await checkAndReturnPortfolio(req, parseInt(req.params.id));
+      const { userId } = req.body;
+
+      const unlinkedPortfolio = await PortfolioRepo.unlinkPortfolio(portfolio, userId);
+
+      if (!unlinkedPortfolio) {
         const error: StatusError = new Error('Unlinking portfolio failed.');
         error.statusCode = 500;
         throw error;
       }
 
-      res.status(200).json({ ...updatedPortfolio });
+      res.status(200).json({ ...unlinkedPortfolio });
     } catch (err: any) {
       if (!err.statusCode) {
         err.statusCode = 500;

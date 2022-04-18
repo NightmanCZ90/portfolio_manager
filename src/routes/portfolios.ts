@@ -72,6 +72,18 @@ router.put(
 );
 
 router.put(
+  '/portfolios/:id/link',
+  isAuth,
+  [
+    body('email')
+      .isEmail()
+      .withMessage('Please enter a valid email')
+      .normalizeEmail()
+  ],
+  portfoliosController.linkPortfolio
+);
+
+router.put(
   '/portfolios/:id/unlink',
   isAuth,
   portfoliosController.unlinkPortfolio
