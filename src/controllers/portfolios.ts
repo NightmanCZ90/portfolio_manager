@@ -104,6 +104,13 @@ const portfoliosController = {
       const portfolio = await checkAndReturnPortfolio(req, parseInt(req.params.id));
       const { name, description, color, url } = req.body;
 
+      /** Check whether portfolio is managed. Only PM can update managed portfolio */
+      if (portfolio.pmId && portfolio.pmId !== req.body.userId) {
+        const error: StatusError = new Error('Only portfolio managers can update this portfolio.');
+        error.statusCode = 403;
+        throw error;
+      }
+
       const updatedPortfolio = await PortfolioRepo.update({ ...portfolio, name, description, color, url });
 
       res.status(200).json({ ...updatedPortfolio });
@@ -135,7 +142,15 @@ const portfoliosController = {
   deletePortfolio: async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const portfolioId = Number(req.params.id);
-      await checkAndReturnPortfolio(req, portfolioId);
+      const portfolio = await checkAndReturnPortfolio(req, portfolioId);
+
+      /** Check whether portfolio is managed. Only PM can delete managed portfolio */
+      if (portfolio.pmId && portfolio.pmId !== req.body.userId) {
+        const error: StatusError = new Error('Only portfolio managers can delete this portfolio.');
+        error.statusCode = 403;
+        throw error;
+      }
+
       await PortfolioRepo.delete(portfolioId);
 
       res.status(200).json({ message: 'Success.' });
