@@ -110,7 +110,7 @@ class PortfolioRepo {
   }
 
   static async unlinkPortfolio(portfolio: Portfolio, userId: number): Promise<Portfolio & { user: User } | null> {
-    const newUserId = portfolio.userId !== userId ? portfolio.userId : portfolio.pmId;
+    const newUserId = portfolio.userId !== userId ? portfolio.pmId : portfolio.userId;
 
     if (!newUserId) return null;
 
