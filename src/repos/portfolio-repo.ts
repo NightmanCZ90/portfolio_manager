@@ -4,8 +4,14 @@ import { prisma } from '../server';
 
 class PortfolioRepo {
 
-  static async findById(id: number): Promise<Portfolio | null> {
-    const portfolio = await prisma.portfolio.findUnique({ where: { id: Number(id) } });
+  static async findById(id: number): Promise<Portfolio & { user: User, portfolioManager: User | null } | null> {
+    const portfolio = await prisma.portfolio.findUnique({
+      where: { id: Number(id) },
+      include: {
+        user: true,
+        portfolioManager: true
+      },
+  });
 
     return portfolio;
   }
@@ -59,7 +65,7 @@ class PortfolioRepo {
     return createdPortfolio;
   }
 
-  static async update(portfolio: Portfolio): Promise<Portfolio> {
+  static async update(portfolio: Portfolio): Promise<Portfolio & { user: User, portfolioManager: User | null }> {
     const { name, description, color, url, id } = portfolio;
     const updatedPortfolio = await prisma.portfolio.update({
       where: { id: Number(id) },
@@ -109,7 +115,7 @@ class PortfolioRepo {
     return linkedPortfolio;
   }
 
-  static async unlinkPortfolio(portfolio: Portfolio): Promise<Portfolio & { user: User } | null> {
+  static async unlinkPortfolio(portfolio: Portfolio): Promise<Portfolio | null> {
     if (!portfolio.pmId) return null;
 
     const unlinkedPortfolio = await prisma.portfolio.update({
@@ -119,9 +125,6 @@ class PortfolioRepo {
         confirmed: true,
         userId: portfolio.pmId,
         pmId: null,
-      },
-      include: {
-        user: true,
       }
     });
 
