@@ -109,17 +109,15 @@ class PortfolioRepo {
     return linkedPortfolio;
   }
 
-  static async unlinkPortfolio(portfolio: Portfolio, userId: number): Promise<Portfolio & { user: User } | null> {
-    const newUserId = portfolio.userId !== userId ? portfolio.pmId : portfolio.userId;
-
-    if (!newUserId) return null;
+  static async unlinkPortfolio(portfolio: Portfolio): Promise<Portfolio & { user: User } | null> {
+    if (!portfolio.pmId) return null;
 
     const unlinkedPortfolio = await prisma.portfolio.update({
       where: { id: Number(portfolio.id) },
       data: {
         updatedAt: new Date(),
         confirmed: true,
-        userId: newUserId,
+        userId: portfolio.pmId,
         pmId: null,
       },
       include: {

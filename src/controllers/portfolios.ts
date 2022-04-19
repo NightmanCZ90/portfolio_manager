@@ -177,9 +177,8 @@ const portfoliosController = {
   unlinkPortfolio: async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const portfolio = await checkAndReturnPortfolio(req, parseInt(req.params.id));
-      const { userId } = req.body;
 
-      const unlinkedPortfolio = await PortfolioRepo.unlinkPortfolio(portfolio, userId);
+      const unlinkedPortfolio = await PortfolioRepo.unlinkPortfolio(portfolio);
 
       if (!unlinkedPortfolio) {
         const error: StatusError = new Error('Unlinking portfolio failed.');
