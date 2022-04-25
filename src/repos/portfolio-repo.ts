@@ -1,22 +1,23 @@
-import { Portfolio, User } from '@prisma/client';
+import { Portfolio, Transaction, User } from '@prisma/client';
 import { BasePortfolio } from '../models/portfolio';
 import { prisma } from '../server';
 
 class PortfolioRepo {
 
-  static async findById(id: number): Promise<Portfolio & { user: User, portfolioManager: User | null } | null> {
+  static async findById(id: number): Promise<Portfolio & { user: User, portfolioManager: User | null, transactions: Transaction[] } | null> {
     const portfolio = await prisma.portfolio.findUnique({
       where: { id: Number(id) },
       include: {
         user: true,
-        portfolioManager: true
+        portfolioManager: true,
+        transactions: true,
       },
-  });
+    });
 
     return portfolio;
   }
 
-  static async findAllByUserId(id: number): Promise<(Portfolio & { portfolioManager: User | null })[]> {
+  static async findAllByUserId(id: number): Promise<(Portfolio & { portfolioManager: User | null, transactions: Transaction[] })[]> {
     const portfolios = await prisma.portfolio.findMany({
       where: {
         userId: Number(id)
@@ -26,13 +27,14 @@ class PortfolioRepo {
       },
       include: {
         portfolioManager: true,
+        transactions: true,
       },
     });
 
     return portfolios;
   }
 
-  static async findAllByPmId(id: number): Promise<(Portfolio & { user: User })[]> {
+  static async findAllByPmId(id: number): Promise<(Portfolio & { user: User, transactions: Transaction[] })[]> {
     const portfolios = await prisma.portfolio.findMany({
       where: {
         pmId: Number(id)
@@ -41,7 +43,8 @@ class PortfolioRepo {
         id: 'asc'
       },
       include: {
-        user: true
+        user: true,
+        transactions: true,
       }
     });
 
@@ -65,7 +68,7 @@ class PortfolioRepo {
     return createdPortfolio;
   }
 
-  static async update(portfolio: Portfolio): Promise<Portfolio & { user: User, portfolioManager: User | null }> {
+  static async update(portfolio: Portfolio): Promise<Portfolio & { user: User, portfolioManager: User | null, transactions: Transaction[] }> {
     const { name, description, color, url, id } = portfolio;
     const updatedPortfolio = await prisma.portfolio.update({
       where: { id: Number(id) },
@@ -79,25 +82,29 @@ class PortfolioRepo {
       include: {
         user: true,
         portfolioManager: true,
+        transactions: true,
       }
     });
 
     return updatedPortfolio;
   }
 
-  static async confirmPortfolio(portfolioId: number): Promise<Portfolio> {
+  static async confirmPortfolio(portfolioId: number): Promise<Portfolio & { transactions: Transaction[] }> {
     const confirmedPortfolio = await prisma.portfolio.update({
       where: { id: Number(portfolioId) },
       data: {
         updatedAt: new Date(),
         confirmed: true,
+      },
+      include: {
+        transactions: true,
       }
     });
 
     return confirmedPortfolio;
   }
 
-  static async linkPortfolio(portfolio: Portfolio, userId: number, investorId: number): Promise<Portfolio & { user: User, portfolioManager: User | null }> {
+  static async linkPortfolio(portfolio: Portfolio, userId: number, investorId: number): Promise<Portfolio & { user: User, portfolioManager: User | null, transactions: Transaction[] }> {
     const linkedPortfolio = await prisma.portfolio.update({
       where: { id: Number(portfolio.id) },
       data: {
@@ -108,14 +115,15 @@ class PortfolioRepo {
       },
       include: {
         user: true,
-        portfolioManager: true
+        portfolioManager: true,
+        transactions: true,
       }
     });
 
     return linkedPortfolio;
   }
 
-  static async unlinkPortfolio(portfolio: Portfolio): Promise<Portfolio | null> {
+  static async unlinkPortfolio(portfolio: Portfolio): Promise<Portfolio & { transactions: Transaction[] } | null> {
     if (!portfolio.pmId) return null;
 
     const unlinkedPortfolio = await prisma.portfolio.update({
@@ -125,6 +133,9 @@ class PortfolioRepo {
         confirmed: true,
         userId: portfolio.pmId,
         pmId: null,
+      },
+      include: {
+        transactions: true,
       }
     });
 
