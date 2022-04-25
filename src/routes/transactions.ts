@@ -22,7 +22,7 @@ const transactionValidation = [
     .isLength({
       max: 20,
     })
-    .withMessage('Max length of stock description is 20 chars.'),
+    .withMessage('Max length of stock sector is 20 chars.'),
   body('transactionTime')
     .notEmpty()
     .isISO8601()
