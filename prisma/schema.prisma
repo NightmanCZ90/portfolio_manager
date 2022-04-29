@@ -23,7 +23,7 @@ model Portfolio {
   url              String?
   userId           Int           @map("user_id")
   pmId             Int?          @map("pm_id")
-  confirmed        Boolean       @default(false) @map("confirmed")
+  confirmed        Boolean       @default(false)
   portfolioManager User?         @relation("portfolios_pm_idTousers", fields: [pmId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   user             User          @relation("portfolios_user_idTousers", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   transactions     Transaction[]
@@ -39,7 +39,7 @@ model Transaction {
   stockSector     String?   @map("stock_sector") @db.VarChar(20)
   transactionTime DateTime  @map("transaction_time") @db.Timestamptz(6)
   transactionType String    @map("transaction_type") @db.VarChar(40)
-  numShares       Int       @map("num_shares")
+  numShares       BigInt    @map("num_shares")
   price           Int
   currency        String    @db.VarChar(4)
   execution       String    @db.VarChar(20)
