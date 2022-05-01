@@ -39,11 +39,11 @@ model Transaction {
   stockSector     String?   @map("stock_sector") @db.VarChar(20)
   transactionTime DateTime  @map("transaction_time") @db.Timestamptz(6)
   transactionType String    @map("transaction_type") @db.VarChar(40)
-  numShares       Int       @map("num_shares")
-  price           Int
+  numShares       Decimal   @map("num_shares") @db.Decimal
+  price           Decimal   @db.Decimal
   currency        String    @db.VarChar(4)
   execution       String    @db.VarChar(20)
-  commissions     Int?
+  commissions     Decimal?  @db.Decimal
   notes           String?
   portfolioId     Int       @map("portfolio_id")
   portfolio       Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade, onUpdate: NoAction)
